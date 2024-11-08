@@ -94,7 +94,7 @@ const SkillIcon = ({ icon: Icon, name }: { icon: any, name: string }) => (
           whileHover={{ scale: 1.2, rotate: 5 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Icon className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />
+          <Icon className="h-8 w-8 text-primary" />
         </motion.div>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
@@ -151,18 +151,18 @@ function Typewriter({ texts }: { texts: string[] }) {
 }
 
 const skillIcons = [
-  { name: "React", icon: SiReact, url: "https://reactjs.org/" },
-  { name: "Next.js", icon: SiNextdotjs, url: "https://nextjs.org/" },
-  { name: "Fastify", icon: SiFastify, url: "https://www.fastify.io/" },
-  { name: "MongoDB", icon: SiMongodb, url: "https://www.mongodb.com/" },
-  { name: "Tailwind CSS", icon: SiTailwindcss, url: "https://tailwindcss.com/" },
-  { name: "TypeScript", icon: SiTypescript, url: "https://www.typescriptlang.org/" },
-  { name: "Node.js", icon: SiNodedotjs, url: "https://nodejs.org/" },
-  { name: "GraphQL", icon: SiGraphql, url: "https://graphql.org/" }
+  { name: "React", icon: SiReact },
+  { name: "Next.js", icon: SiNextdotjs },
+  { name: "Fastify", icon: SiFastify },
+  { name: "MongoDB", icon: SiMongodb },
+  { name: "Tailwind CSS", icon: SiTailwindcss },
+  { name: "TypeScript", icon: SiTypescript },
+  { name: "Node.js", icon: SiNodedotjs },
+  { name: "GraphQL", icon: SiGraphql }
 ]
 
 export default function MinimalistPortfolio() {
-  const [language, setLanguage] = useState<'en' | 'es' | 'fr'>('en')
+  const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'de' | 'it' | 'ja' | 'ko' | 'pt' | 'ru' | 'zh'>('en')
 
   useEffect(() => {
     document.documentElement.classList.add('dark')
@@ -175,6 +175,7 @@ export default function MinimalistPortfolio() {
       viewProjects: "View Projects",
       sourceCode: "Source Code",
       legacyVersion: "Legacy Version",
+      skills: "Skills",
     },
     es: {
       greeting: "¡Hola! Soy Spoody",
@@ -182,6 +183,7 @@ export default function MinimalistPortfolio() {
       viewProjects: "Ver Proyectos",
       sourceCode: "Código Fuente",
       legacyVersion: "Versión Anterior",
+      skills: "Habilidades",
     },
     fr: {
       greeting: "Bonjour ! Je suis Spoody",
@@ -189,6 +191,63 @@ export default function MinimalistPortfolio() {
       viewProjects: "Voir les Projets",
       sourceCode: "Code Source",
       legacyVersion: "Version Précédente",
+      skills: "Compétences",
+    },
+    de: {
+      greeting: "Hallo! Ich bin Spoody",
+      description: "Ein leidenschaftlicher Entwickler, der digitale Erlebnisse mit modernen Webtechnologien gestaltet.",
+      viewProjects: "Projekte ansehen",
+      sourceCode: "Quellcode",
+      legacyVersion: "Ältere Version",
+      skills: "Fähigkeiten",
+    },
+    it: {
+      greeting: "Ciao! Sono Spoody",
+      description: "Uno sviluppatore appassionato che crea esperienze digitali con tecnologie web moderne.",
+      viewProjects: "Visualizza Progetti",
+      sourceCode: "Codice Sorgente",
+      legacyVersion: "Versione Precedente",
+      skills: "Competenze",
+    },
+    ja: {
+      greeting: "こんにちは！Spoodyです",
+      description: "最新のWeb技術でデジタル体験を作り出す情熱的な開発者です。",
+      viewProjects: "プロジェクトを見る",
+      sourceCode: "ソースコード",
+      legacyVersion: "旧バージョン",
+      skills: "スキル",
+    },
+    ko: {
+      greeting: "안녕하세요! 저는 Spoody입니다",
+      description: "현대적인 웹 기술로 디지털 경험을 만드는 열정적인 개발자입니다.",
+      viewProjects: "프로젝트 보기",
+      sourceCode: "소스 코드",
+      legacyVersion: "이전 버전",
+      skills: "기술",
+    },
+    pt: {
+      greeting: "Olá! Eu sou Spoody",
+      description: "Um desenvolvedor apaixonado criando experiências digitais com tecnologias web modernas.",
+      viewProjects: "Ver Projetos",
+      sourceCode: "Código Fonte",
+      legacyVersion: "Versão Anterior",
+      skills: "Habilidades",
+    },
+    ru: {
+      greeting: "Привет! Я Spoody",
+      description: "Увлеченный разработчик, создающий цифровые впечатления с помощью современных веб-технологий.",
+      viewProjects: "Посмотреть проекты",
+      sourceCode: "Исходный код",
+      legacyVersion: "Предыдущая версия",
+      skills: "Навыки",
+    },
+    zh: {
+      greeting: "你好！我是Spoody",
+      description: "一位热衷于使用现代网络技术创造数字体验的开发者。",
+      viewProjects: "查看项目",
+      sourceCode: "源代码",
+      legacyVersion: "旧版本",
+      skills: "技能",
     },
   }
 
@@ -204,7 +263,7 @@ export default function MinimalistPortfolio() {
     "Привет! Я Spoody",
     "你好！我是Spoody",
     "Olá! Eu sou Spoody",
-    "Merhaba! Ben Spoody"
+    "안녕하세요! 저는 Spoody입니다"
   ]
 
   return (
@@ -217,14 +276,21 @@ export default function MinimalistPortfolio() {
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
         <div className="absolute top-4 right-4 flex items-center space-x-4">
-          <Select value={language} onValueChange={(value: 'en' | 'es' | 'fr') => setLanguage(value)}>
+          <Select value={language} onValueChange={(value: typeof language) => setLanguage(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a language" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className='z-10'>
               <SelectItem value="en">English</SelectItem>
               <SelectItem value="es">Español</SelectItem>
               <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="de">Deutsch</SelectItem>
+              <SelectItem value="it">Italiano</SelectItem>
+              <SelectItem value="ja">日本語</SelectItem>
+              <SelectItem value="ko">한국어</SelectItem>
+              <SelectItem value="pt">Português</SelectItem>
+              <SelectItem value="ru">Русский</SelectItem>
+              <SelectItem value="zh">中文</SelectItem>
             </SelectContent>
           </Select>
           <TooltipProvider>
@@ -280,7 +346,7 @@ export default function MinimalistPortfolio() {
           </motion.h1>
           
           <motion.p 
-            className="text-lg text-muted-foreground max-w-[600px] mx-auto"
+            className="text-lg text-muted-foreground max-w-[600px] "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
@@ -289,14 +355,17 @@ export default function MinimalistPortfolio() {
           </motion.p>
 
           <motion.div 
-            className="flex flex-wrap justify-center gap-4 py-6"
+            className="space-y-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            {skillIcons.map(({ name, icon, url }) => (
-              <SkillIcon key={name} icon={icon} name={name} />
-            ))}
+            <h2 className="text-2xl font-semibold text-foreground">{t('skills')}</h2>
+            <div className="flex flex-wrap justify-center gap-6">
+              {skillIcons.map(({ name, icon }) => (
+                <SkillIcon key={name} icon={icon} name={name} />
+              ))}
+            </div>
           </motion.div>
 
           <motion.div 
@@ -323,7 +392,7 @@ export default function MinimalistPortfolio() {
                 asChild
               >
                 <a
-                  href="https://github.com/yourusername/portfolio"
+                  href="https://github.com/spooderman11/crispy-happiness"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
