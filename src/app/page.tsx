@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Github, Twitter, Mail, Code, ArrowRight } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { 
@@ -21,6 +27,7 @@ import {
   SiNodedotjs, 
   SiGraphql 
 } from "react-icons/si"
+import Link from 'next/link'
 
 function useDarkMode() {
   useEffect(() => {
@@ -83,18 +90,27 @@ const socialButtonVariants = {
   tap: { scale: 0.9 }
 }
 
-const SocialButton = ({ icon: Icon, href, color }: { icon: any, href: string, color: string }) => (
-  <motion.div variants={socialButtonVariants} whileHover="hover" whileTap="tap">
-    <Button
-      variant="outline"
-      size="icon"
-      className={`bg-${color} hover:bg-${color}/80 text-white border-none`}
-    >
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        <Icon className="h-5 w-5" />
-      </a>
-    </Button>
-  </motion.div>
+const SocialButton = ({ icon: Icon, href, color, tooltip }: { icon: any, href: string, color: string, tooltip: string }) => (
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <motion.div variants={socialButtonVariants} whileHover="hover" whileTap="tap">
+          <Button
+            variant="outline"
+            size="icon"
+            className={`bg-${color} hover:bg-${color}/80 text-white border-none cursor-pointer`}
+          >
+            <a href={href} target="_blank" rel="noopener noreferrer">
+              <Icon className="h-5 w-5" />
+            </a>
+          </Button>
+        </motion.div>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+        <p>{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 )
 
 function Typewriter({ texts }: { texts: string[] }) {
@@ -143,16 +159,16 @@ function Typewriter({ texts }: { texts: string[] }) {
   )
 }
 
-const skillIcons = {
-  "React": SiReact,
-  "Next.js": SiNextdotjs,
-  "Fastify": SiFastify,
-  "MongoDB": SiMongodb,
-  "Tailwind CSS": SiTailwindcss,
-  "TypeScript": SiTypescript,
-  "Node.js": SiNodedotjs,
-  "GraphQL": SiGraphql
-}
+const skillIcons = [
+  { name: "React", icon: SiReact, url: "https://reactjs.org/" },
+  { name: "Next.js", icon: SiNextdotjs, url: "https://nextjs.org/" },
+  { name: "Fastify", icon: SiFastify, url: "https://www.fastify.io/" },
+  { name: "MongoDB", icon: SiMongodb, url: "https://www.mongodb.com/" },
+  { name: "Tailwind CSS", icon: SiTailwindcss, url: "https://tailwindcss.com/" },
+  { name: "TypeScript", icon: SiTypescript, url: "https://www.typescriptlang.org/" },
+  { name: "Node.js", icon: SiNodedotjs, url: "https://nodejs.org/" },
+  { name: "GraphQL", icon: SiGraphql, url: "https://graphql.org/" }
+]
 
 export default function StarfieldPortfolio() {
   useDarkMode()
@@ -173,15 +189,24 @@ export default function StarfieldPortfolio() {
         >
           <Card className="w-full max-w-[800px] bg-background/60 relative">
             <div className="absolute top-2 right-2 z-10">
-              <a
-                href="https://github.com/yourusername/portfolio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors"
-              >
-                <Code className="h-3 w-3" />
-                Want the source?
-              </a>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href="https://github.com/yourusername/portfolio"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors cursor-pointer"
+                    >
+                      <Code className="h-3 w-3" />
+                      Want the source?
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+                    <p>View the source code on GitHub</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <motion.div variants={itemVariants}>
               <CardHeader className="flex flex-row items-center gap-4">
@@ -214,11 +239,24 @@ export default function StarfieldPortfolio() {
                     initial="hidden"
                     animate="visible"
                   >
-                    {Object.entries(skillIcons).map(([skill, Icon]) => (
-                      <motion.div key={skill} variants={itemVariants}>
-                        <Badge variant="secondary" className="p-1.5">
-                          <Icon className="w-5 h-5" title={skill} />
-                        </Badge>
+                    {skillIcons.map(({ name, icon: Icon, url }) => (
+                      <motion.div key={name} variants={itemVariants}>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge 
+                                variant="secondary" 
+                                className="p-1.5 cursor-pointer hover:bg-secondary/80 transition-colors"
+                                onClick={() => window.open(url, '_blank')}
+                              >
+                                <Icon className="w-5 h-5" />
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+                              <p>Click to learn more about {name}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </motion.div>
                     ))}
                   </motion.div>
@@ -250,26 +288,44 @@ export default function StarfieldPortfolio() {
                   initial="hidden"
                   animate="visible"
                 >
-                  <SocialButton icon={Github} href="https://github.com/spooderman11" color="gray-700" />
-                  <SocialButton icon={Twitter} href="https://x.com/therealspoody" color="blue-400" />
-                  <SocialButton icon={Mail} href="mailto:michael@vynx.tech" color="red-500" />
+                  <SocialButton icon={Github} href="https://github.com/spooderman11" color="gray-700" tooltip="GitHub Profile" />
+                  <SocialButton icon={Twitter} href="https://x.com/therealspoody" color="blue-400" tooltip="Twitter Profile" />
+                  <SocialButton icon={Mail} href="mailto:michael@vynx.tech" color="red-500" tooltip="Send Email" />
                 </motion.div>
                 <motion.div variants={itemVariants}>
-                  <Button
-                    onClick={() => window.open("https://discord.com/users/1260750149446013090", "_blank")}
-                    variant="outline"
-                    className="bg-[#5865F2] hover:bg-[#5865F2]/80 text-white border-none"
-                  >
-                    <FaDiscord className="mr-2 h-4 w-4" /> Contact on Discord
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => window.open("https://discord.com/users/1260750149446013090", "_blank")}
+                          variant="outline"
+                          className="bg-[#5865F2] hover:bg-[#5865F2]/80 text-white border-none cursor-pointer"
+                        >
+                          <FaDiscord className="mr-2 h-4 w-4" /> Contact on Discord
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+                        <p>Connect with me on Discord</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </motion.div>
-                <Button
-                  onClick={() => window.location.href = '/projects'}
-                  variant="outline"
-                  className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
-                >
-                  View Projects <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => window.location.href = '/projects'}
+                        variant="outline"
+                        className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20 cursor-pointer"
+                      >
+                        View Projects <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+                      <p>Explore my project portfolio</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </CardFooter>
             </motion.div>
           </Card>
