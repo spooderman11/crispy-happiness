@@ -38,10 +38,19 @@ import {
   SiTypescript,
   SiNodedotjs,
   SiGraphql,
+  SiJavascript,
+  SiPython,
+  SiDocker,
+  SiGit,
+  SiRedux,
+  SiSass,
+  SiPostgresql,
+  SiOracle,
 } from "react-icons/si";
 import Link from "next/link";
 import Image from "next/image";
 
+// Move AnimatedStars component definition to the top
 function AnimatedStars() {
   const starsRef = useRef<any>();
 
@@ -107,10 +116,11 @@ const SkillIcon = ({ icon: Icon, name }: { icon: any; name: string }) => (
     <Tooltip>
       <TooltipTrigger asChild>
         <motion.div
-          whileHover={{ scale: 1.2, rotate: 5 }}
+          whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.95 }}
+          className="flex items-center justify-center w-10 h-10"
         >
-          <Icon className="h-8 w-8 text-primary" />
+          <Icon className="h-6 w-6 text-primary" />
         </motion.div>
       </TooltipTrigger>
       <TooltipContent
@@ -187,6 +197,14 @@ const skillIcons = [
   { name: "TypeScript", icon: SiTypescript },
   { name: "Node.js", icon: SiNodedotjs },
   { name: "GraphQL", icon: SiGraphql },
+  { name: "JavaScript", icon: SiJavascript },
+  { name: "Python", icon: SiPython },
+  { name: "Docker", icon: SiDocker },
+  { name: "Git", icon: SiGit },
+  { name: "Oracle", icon: SiOracle },
+  { name: "Redux", icon: SiRedux },
+  { name: "Sass", icon: SiSass },
+  { name: "PostgreSQL", icon: SiPostgresql },
 ];
 
 export default function MinimalistPortfolio() {
@@ -418,7 +436,7 @@ export default function MinimalistPortfolio() {
             <h2 className="text-2xl font-semibold text-foreground">
               {t("skills")}
             </h2>
-            <div className="flex flex-wrap justify-center gap-6">
+            <div className="flex flex-wrap justify-center gap-2">
               {skillIcons.map(({ name, icon }) => (
                 <SkillIcon key={name} icon={icon} name={name} />
               ))}
