@@ -24,25 +24,22 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 
 
 ```shellscript
- git clone https://github.com/spooderman11/crispy-happiness.gitgit clone https://github.com/spooderman11/crispy-happiness.git
-
+ git clone https://github.com/spooderman11/crispy-happiness.git
 ```
 
 2. Install dependencies:
 
 
 ```shellscript
- cd crispy-happinesscd crispy-happiness
+cd crispy-happiness
 npm install
-
 ```
 
 3. Run the development server:
 
 
 ```shellscript
- npm run devnpm run dev
-
+ npm run dev
 ```
 
 ## 🎨 Customization
