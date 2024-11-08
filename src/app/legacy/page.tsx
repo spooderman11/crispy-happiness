@@ -193,7 +193,7 @@ export default function StarfieldPortfolio() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a
-                      href="https://github.com/yourusername/portfolio"
+                      href="https://github.com/spooderman11/crispy-happiness"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors cursor-pointer"

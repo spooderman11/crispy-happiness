@@ -26,6 +26,7 @@ import {
 } from "react-icons/si"
 import Link from 'next/link'
 import Image from 'next/image'
+import { useLocale } from 'next-intl'
 
 function AnimatedStars() {
   const starsRef = useRef<any>()
@@ -154,18 +155,26 @@ const skillIcons = [
 ]
 
 export default function MinimalistPortfolio() {
+  const locale = useLocale()
+
   useEffect(() => {
     document.documentElement.classList.add('dark')
   }, [])
 
-  const greetings = [
-    "Hi! I'm Spoody",
-    "¡Hola! Soy Spoody",
-    "Bonjour ! Je suis Spoody",
-    "Ciao! Sono Spoody",
-    "こんにちは！Spoodyです",
-    "Hallo! Ich bin Spoody"
-  ]
+  const greetings = {
+    en: "Hi! I'm Spoody",
+    es: "¡Hola! Soy Spoody",
+    fr: "Bonjour ! Je suis Spoody",
+    it: "Ciao! Sono Spoody",
+    ja: "こんにちは！Spoodyです",
+    de: "Hallo! Ich bin Spoody"
+  }
+
+  const getGreetings = () => {
+    const defaultGreeting = greetings.en
+    const localeGreeting = greetings[locale as keyof typeof greetings]
+    return [localeGreeting, ...Object.values(greetings).filter(g => g !== localeGreeting)]
+  }
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
@@ -226,7 +235,7 @@ export default function MinimalistPortfolio() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <Typewriter texts={greetings} />
+            <Typewriter texts={getGreetings()} />
           </motion.h1>
           
           <motion.p 
@@ -273,7 +282,7 @@ export default function MinimalistPortfolio() {
                 asChild
               >
                 <a
-                  href="https://github.com/yourusername/portfolio"
+                  href="https://github.com/spooderman11/crispy-happiness"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
