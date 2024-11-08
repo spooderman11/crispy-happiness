@@ -33,7 +33,6 @@ import {
 } from "react-icons/si"
 import Link from 'next/link'
 import Image from 'next/image'
-import { LanguageProvider, useLanguage } from '@/lib/i18n'
 
 function AnimatedStars() {
   const starsRef = useRef<any>()
@@ -162,36 +161,38 @@ const skillIcons = [
   { name: "GraphQL", icon: SiGraphql, url: "https://graphql.org/" }
 ]
 
-const LanguageSelector = () => {
-  const { language, setLanguage } = useLanguage()
-
-  return (
-    <Select value={language} onValueChange={(value: any) => setLanguage(value as any)}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a language" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="en">English</SelectItem>
-        <SelectItem value="es">Español</SelectItem>
-        <SelectItem value="fr">Français</SelectItem>
-        <SelectItem value="it">Italiano</SelectItem>
-        <SelectItem value="ja">日本語</SelectItem>
-        <SelectItem value="de">Deutsch</SelectItem>
-        <SelectItem value="ru">Русский</SelectItem>
-        <SelectItem value="zh">中文</SelectItem>
-        <SelectItem value="pt">Português</SelectItem>
-        <SelectItem value="tr">Türkçe</SelectItem>
-      </SelectContent>
-    </Select>
-  )
-}
-
-function MinimalistPortfolio() {
-  const { t, language } = useLanguage()
+export default function MinimalistPortfolio() {
+  const [language, setLanguage] = useState<'en' | 'es' | 'fr'>('en')
 
   useEffect(() => {
     document.documentElement.classList.add('dark')
   }, [])
+
+  const translations = {
+    en: {
+      greeting: "Hi! I'm Spoody",
+      description: "A passionate developer crafting digital experiences with modern web technologies.",
+      viewProjects: "View Projects",
+      sourceCode: "Source Code",
+      legacyVersion: "Legacy Version",
+    },
+    es: {
+      greeting: "¡Hola! Soy Spoody",
+      description: "Un desarrollador apasionado creando experiencias digitales con tecnologías web modernas.",
+      viewProjects: "Ver Proyectos",
+      sourceCode: "Código Fuente",
+      legacyVersion: "Versión Anterior",
+    },
+    fr: {
+      greeting: "Bonjour ! Je suis Spoody",
+      description: "Un développeur passionné créant des expériences numériques avec des technologies web modernes.",
+      viewProjects: "Voir les Projets",
+      sourceCode: "Code Source",
+      legacyVersion: "Version Précédente",
+    },
+  }
+
+  const t = (key: keyof typeof translations.en) => translations[language][key]
 
   const greetings = [
     t('greeting'),
@@ -216,7 +217,16 @@ function MinimalistPortfolio() {
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
         <div className="absolute top-4 right-4 flex items-center space-x-4">
-          <LanguageSelector />
+          <Select value={language} onValueChange={(value: 'en' | 'es' | 'fr') => setLanguage(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Español</SelectItem>
+              <SelectItem value="fr">Français</SelectItem>
+            </SelectContent>
+          </Select>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -354,13 +364,5 @@ function MinimalistPortfolio() {
         </motion.div>
       </div>
     </div>
-  )
-}
-
-export default function WrappedMinimalistPortfolio() {
-  return (
-    <LanguageProvider>
-      <MinimalistPortfolio />
-    </LanguageProvider>
   )
 }
