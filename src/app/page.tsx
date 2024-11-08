@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Github, Twitter, Mail } from "lucide-react"
+import { Github, Twitter, Mail, Code } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { 
   SiReact, 
@@ -104,9 +104,9 @@ function Typewriter({ texts }: { texts: string[] }) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    const typeSpeed = 30 // Faster typing speed
-    const deleteSpeed = 15 // Faster deleting speed
-    const pauseDelay = 2000 // 2 seconds pause between phrases
+    const typeSpeed = 30
+    const deleteSpeed = 15
+    const pauseDelay = 2000
 
     const timeout = setTimeout(() => {
       if (!isDeleting && currentIndex < texts[textIndex].length) {
@@ -171,7 +171,18 @@ export default function StarfieldPortfolio() {
           animate="visible"
           variants={containerVariants}
         >
-          <Card className="w-full max-w-[800px] bg-background/60">
+          <Card className="w-full max-w-[800px] bg-background/60 relative">
+            <div className="absolute top-2 right-2 z-10">
+              <a
+                href=""
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors"
+              >
+                <Code className="h-3 w-3" />
+                Want the source?
+              </a>
+            </div>
             <motion.div variants={itemVariants}>
               <CardHeader className="flex flex-row items-center gap-4">
                 <Avatar className="w-20 h-20">
