@@ -174,7 +174,7 @@ export default function StarfieldPortfolio() {
           <Card className="w-full max-w-[800px] bg-background/60 relative">
             <div className="absolute top-2 right-2 z-10">
               <a
-                href=""
+                href="https://github.com/spooderman11/crispy-happiness"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors"
