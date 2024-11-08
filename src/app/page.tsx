@@ -12,7 +12,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Github, Twitter, Mail, ExternalLink, Code, History } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Github, Twitter, Mail, ExternalLink, Code, History, Globe } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { 
   SiReact, 
@@ -26,6 +33,7 @@ import {
 } from "react-icons/si"
 import Link from 'next/link'
 import Image from 'next/image'
+import { LanguageProvider, useLanguage } from '@/lib/i18n'
 
 function AnimatedStars() {
   const starsRef = useRef<any>()
@@ -67,6 +75,7 @@ const SocialButton = ({ icon: Icon, href, label }: { icon: any, href: string, la
           >
             <a href={href} target="_blank" rel="noopener noreferrer">
               <Icon className="h-5 w-5" />
+              <span className="sr-only">{label}</span>
             </a>
           </Button>
         </motion.div>
@@ -153,18 +162,48 @@ const skillIcons = [
   { name: "GraphQL", icon: SiGraphql, url: "https://graphql.org/" }
 ]
 
-export default function MinimalistPortfolio() {
+const LanguageSelector = () => {
+  const { language, setLanguage } = useLanguage()
+
+  return (
+    <Select value={language} onValueChange={(value: any) => setLanguage(value as any)}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a language" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="es">Español</SelectItem>
+        <SelectItem value="fr">Français</SelectItem>
+        <SelectItem value="it">Italiano</SelectItem>
+        <SelectItem value="ja">日本語</SelectItem>
+        <SelectItem value="de">Deutsch</SelectItem>
+        <SelectItem value="ru">Русский</SelectItem>
+        <SelectItem value="zh">中文</SelectItem>
+        <SelectItem value="pt">Português</SelectItem>
+        <SelectItem value="tr">Türkçe</SelectItem>
+      </SelectContent>
+    </Select>
+  )
+}
+
+function MinimalistPortfolio() {
+  const { t, language } = useLanguage()
+
   useEffect(() => {
     document.documentElement.classList.add('dark')
   }, [])
 
   const greetings = [
-    "Hi! I'm Spoody",
+    t('greeting'),
     "¡Hola! Soy Spoody",
     "Bonjour ! Je suis Spoody",
     "Ciao! Sono Spoody",
     "こんにちは！Spoodyです",
-    "Hallo! Ich bin Spoody"
+    "Hallo! Ich bin Spoody",
+    "Привет! Я Spoody",
+    "你好！我是Spoody",
+    "Olá! Eu sou Spoody",
+    "Merhaba! Ben Spoody"
   ]
 
   return (
@@ -176,7 +215,8 @@ export default function MinimalistPortfolio() {
         </Canvas>
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 flex items-center space-x-4">
+          <LanguageSelector />
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -192,13 +232,13 @@ export default function MinimalistPortfolio() {
                   >
                     <Link href="/legacy">
                       <History className="mr-2 h-4 w-4" />
-                      Legacy Version
+                      {t('legacyVersion')}
                     </Link>
                   </Button>
                 </motion.div>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
-                <p>View the legacy version of the portfolio</p>
+                <p>{t('legacyVersion')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -235,7 +275,7 @@ export default function MinimalistPortfolio() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            A passionate developer crafting digital experiences with modern web technologies.
+            {t('description')}
           </motion.p>
 
           <motion.div 
@@ -262,7 +302,7 @@ export default function MinimalistPortfolio() {
                 asChild
               >
                 <Link href="/projects">
-                  View Projects <ExternalLink className="ml-2 h-4 w-4" />
+                  {t('viewProjects')} <ExternalLink className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </motion.div>
@@ -273,12 +313,12 @@ export default function MinimalistPortfolio() {
                 asChild
               >
                 <a
-                  href="https://github.com/spooderman11/crispy-happiness"
+                  href="https://github.com/yourusername/portfolio"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Code className="mr-2 h-4 w-4" />
-                  Source Code
+                  {t('sourceCode')}
                 </a>
               </Button>
             </motion.div>
@@ -303,7 +343,7 @@ export default function MinimalistPortfolio() {
             <SocialButton 
               icon={Mail} 
               href="mailto:michael@vynx.tech" 
-              label="Send Email" 
+              label="Email" 
             />
             <SocialButton 
               icon={FaDiscord} 
@@ -314,5 +354,13 @@ export default function MinimalistPortfolio() {
         </motion.div>
       </div>
     </div>
+  )
+}
+
+export default function WrappedMinimalistPortfolio() {
+  return (
+    <LanguageProvider>
+      <MinimalistPortfolio />
+    </LanguageProvider>
   )
 }
