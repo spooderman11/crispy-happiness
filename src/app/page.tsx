@@ -1,48 +1,56 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Stars, OrbitControls } from "@react-three/drei"
-import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Stars, OrbitControls } from "@react-three/drei";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Github, Twitter, Mail, ExternalLink, Code, History, Globe } from "lucide-react"
-import { FaDiscord } from "react-icons/fa"
-import { 
-  SiReact, 
-  SiNextdotjs, 
-  SiFastify, 
-  SiMongodb, 
-  SiTailwindcss, 
-  SiTypescript, 
-  SiNodedotjs, 
-  SiGraphql 
-} from "react-icons/si"
-import Link from 'next/link'
-import Image from 'next/image'
+} from "@/components/ui/select";
+import {
+  Github,
+  Twitter,
+  Mail,
+  ExternalLink,
+  Code,
+  History,
+  Globe,
+} from "lucide-react";
+import { FaDiscord } from "react-icons/fa";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiFastify,
+  SiMongodb,
+  SiTailwindcss,
+  SiTypescript,
+  SiNodedotjs,
+  SiGraphql,
+} from "react-icons/si";
+import Link from "next/link";
+import Image from "next/image";
 
 function AnimatedStars() {
-  const starsRef = useRef<any>()
+  const starsRef = useRef<any>();
 
   useFrame((state, delta) => {
     if (starsRef.current) {
-      starsRef.current.rotation.x -= delta / 20
-      starsRef.current.rotation.y -= delta / 25
+      starsRef.current.rotation.x -= delta / 20;
+      starsRef.current.rotation.y -= delta / 25;
     }
-  })
+  });
 
   return (
     <Stars
@@ -55,17 +63,22 @@ function AnimatedStars() {
       fade
       speed={1}
     />
-  )
+  );
 }
 
-const SocialButton = ({ icon: Icon, href, label }: { icon: any, href: string, label: string }) => (
+const SocialButton = ({
+  icon: Icon,
+  href,
+  label,
+}: {
+  icon: any;
+  href: string;
+  label: string;
+}) => (
   <TooltipProvider>
     <Tooltip>
       <TooltipTrigger asChild>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
           <Button
             variant="ghost"
             size="icon"
@@ -79,14 +92,17 @@ const SocialButton = ({ icon: Icon, href, label }: { icon: any, href: string, la
           </Button>
         </motion.div>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+      <TooltipContent
+        side="bottom"
+        className="bg-secondary text-secondary-foreground"
+      >
         <p>{label}</p>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
-)
+);
 
-const SkillIcon = ({ icon: Icon, name }: { icon: any, name: string }) => (
+const SkillIcon = ({ icon: Icon, name }: { icon: any; name: string }) => (
   <TooltipProvider>
     <Tooltip>
       <TooltipTrigger asChild>
@@ -97,41 +113,49 @@ const SkillIcon = ({ icon: Icon, name }: { icon: any, name: string }) => (
           <Icon className="h-8 w-8 text-primary" />
         </motion.div>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
+      <TooltipContent
+        side="bottom"
+        className="bg-secondary text-secondary-foreground"
+      >
         <p>{name}</p>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
-)
+);
 
 function Typewriter({ texts }: { texts: string[] }) {
-  const [currentText, setCurrentText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [textIndex, setTextIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [currentText, setCurrentText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [textIndex, setTextIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const typeSpeed = 100
-    const deleteSpeed = 50
-    const pauseDelay = 2000
+    const typeSpeed = 100;
+    const deleteSpeed = 50;
+    const pauseDelay = 2000;
 
-    const timeout = setTimeout(() => {
-      if (!isDeleting && currentIndex < texts[textIndex].length) {
-        setCurrentText(prevText => prevText + texts[textIndex][currentIndex])
-        setCurrentIndex(prevIndex => prevIndex + 1)
-      } else if (isDeleting && currentIndex > 0) {
-        setCurrentText(prevText => prevText.slice(0, -1))
-        setCurrentIndex(prevIndex => prevIndex - 1)
-      } else if (currentIndex === texts[textIndex].length) {
-        setTimeout(() => setIsDeleting(true), pauseDelay)
-      } else if (currentIndex === 0 && isDeleting) {
-        setIsDeleting(false)
-        setTextIndex((prevIndex) => (prevIndex + 1) % texts.length)
-      }
-    }, isDeleting ? deleteSpeed : typeSpeed)
+    const timeout = setTimeout(
+      () => {
+        if (!isDeleting && currentIndex < texts[textIndex].length) {
+          setCurrentText(
+            (prevText) => prevText + texts[textIndex][currentIndex]
+          );
+          setCurrentIndex((prevIndex) => prevIndex + 1);
+        } else if (isDeleting && currentIndex > 0) {
+          setCurrentText((prevText) => prevText.slice(0, -1));
+          setCurrentIndex((prevIndex) => prevIndex - 1);
+        } else if (currentIndex === texts[textIndex].length) {
+          setTimeout(() => setIsDeleting(true), pauseDelay);
+        } else if (currentIndex === 0 && isDeleting) {
+          setIsDeleting(false);
+          setTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
+        }
+      },
+      isDeleting ? deleteSpeed : typeSpeed
+    );
 
-    return () => clearTimeout(timeout)
-  }, [currentIndex, isDeleting, textIndex, texts])
+    return () => clearTimeout(timeout);
+  }, [currentIndex, isDeleting, textIndex, texts]);
 
   return (
     <span className="inline-flex items-center">
@@ -142,12 +166,16 @@ function Typewriter({ texts }: { texts: string[] }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+          transition={{
+            duration: 0.5,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
           className="inline-block w-[3px] h-6 ml-1 bg-primary"
         />
       </AnimatePresence>
     </span>
-  )
+  );
 }
 
 const skillIcons = [
@@ -158,20 +186,23 @@ const skillIcons = [
   { name: "Tailwind CSS", icon: SiTailwindcss },
   { name: "TypeScript", icon: SiTypescript },
   { name: "Node.js", icon: SiNodedotjs },
-  { name: "GraphQL", icon: SiGraphql }
-]
+  { name: "GraphQL", icon: SiGraphql },
+];
 
 export default function MinimalistPortfolio() {
-  const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'de' | 'it' | 'ja' | 'ko' | 'pt' | 'ru' | 'zh'>('en')
+  const [language, setLanguage] = useState<
+    "en" | "es" | "fr" | "de" | "it" | "ja" | "ko" | "pt" | "ru" | "zh"
+  >("en");
 
   useEffect(() => {
-    document.documentElement.classList.add('dark')
-  }, [])
+    document.documentElement.classList.add("dark");
+  }, []);
 
   const translations = {
     en: {
       greeting: "Hi! I'm Spoody",
-      description: "A passionate developer crafting digital experiences with modern web technologies.",
+      description:
+        "A passionate developer crafting digital experiences with modern web technologies. Proudly supported by my amazing girlfriend.",
       viewProjects: "View Projects",
       sourceCode: "Source Code",
       legacyVersion: "Legacy Version",
@@ -179,7 +210,8 @@ export default function MinimalistPortfolio() {
     },
     es: {
       greeting: "¡Hola! Soy Spoody",
-      description: "Un desarrollador apasionado creando experiencias digitales con tecnologías web modernas.",
+      description:
+        "Un desarrollador apasionado creando experiencias digitales con tecnologías web modernas. Orgullosamente apoyado por mi increíble novia.",
       viewProjects: "Ver Proyectos",
       sourceCode: "Código Fuente",
       legacyVersion: "Versión Anterior",
@@ -187,7 +219,8 @@ export default function MinimalistPortfolio() {
     },
     fr: {
       greeting: "Bonjour ! Je suis Spoody",
-      description: "Un développeur passionné créant des expériences numériques avec des technologies web modernes.",
+      description:
+        "Un développeur passionné créant des expériences numériques avec des technologies web modernes. Fièrement soutenu par ma merveilleuse petite amie.",
       viewProjects: "Voir les Projets",
       sourceCode: "Code Source",
       legacyVersion: "Version Précédente",
@@ -195,7 +228,8 @@ export default function MinimalistPortfolio() {
     },
     de: {
       greeting: "Hallo! Ich bin Spoody",
-      description: "Ein leidenschaftlicher Entwickler, der digitale Erlebnisse mit modernen Webtechnologien gestaltet.",
+      description:
+        "Ein leidenschaftlicher Entwickler, der digitale Erlebnisse mit modernen Webtechnologien gestaltet. Stolz unterstützt von meiner unglaublichen Freundin.",
       viewProjects: "Projekte ansehen",
       sourceCode: "Quellcode",
       legacyVersion: "Ältere Version",
@@ -203,7 +237,8 @@ export default function MinimalistPortfolio() {
     },
     it: {
       greeting: "Ciao! Sono Spoody",
-      description: "Uno sviluppatore appassionato che crea esperienze digitali con tecnologie web moderne.",
+      description:
+        "Uno sviluppatore appassionato che crea esperienze digitali con tecnologie web moderne. Orgogliosamente supportato dalla mia fantastica ragazza.",
       viewProjects: "Visualizza Progetti",
       sourceCode: "Codice Sorgente",
       legacyVersion: "Versione Precedente",
@@ -211,7 +246,8 @@ export default function MinimalistPortfolio() {
     },
     ja: {
       greeting: "こんにちは！Spoodyです",
-      description: "最新のWeb技術でデジタル体験を作り出す情熱的な開発者です。",
+      description:
+        "最新のWeb技術でデジタル体験を作り出す情熱的な開発者です。素晴らしい彼女に支えられています。",
       viewProjects: "プロジェクトを見る",
       sourceCode: "ソースコード",
       legacyVersion: "旧バージョン",
@@ -219,7 +255,8 @@ export default function MinimalistPortfolio() {
     },
     ko: {
       greeting: "안녕하세요! 저는 Spoody입니다",
-      description: "현대적인 웹 기술로 디지털 경험을 만드는 열정적인 개발자입니다.",
+      description:
+        "현대적인 웹 기술로 디지털 경험을 만드는 열정적인 개발자입니다. 멋진 여자친구의 지원을 받고 있습니다.",
       viewProjects: "프로젝트 보기",
       sourceCode: "소스 코드",
       legacyVersion: "이전 버전",
@@ -227,7 +264,8 @@ export default function MinimalistPortfolio() {
     },
     pt: {
       greeting: "Olá! Eu sou Spoody",
-      description: "Um desenvolvedor apaixonado criando experiências digitais com tecnologias web modernas.",
+      description:
+        "Um desenvolvedor apaixonado criando experiências digitais com tecnologias web modernas. Orgulhosamente apoiado pela minha incrível namorada.",
       viewProjects: "Ver Projetos",
       sourceCode: "Código Fonte",
       legacyVersion: "Versão Anterior",
@@ -235,7 +273,8 @@ export default function MinimalistPortfolio() {
     },
     ru: {
       greeting: "Привет! Я Spoody",
-      description: "Увлеченный разработчик, создающий цифровые впечатления с помощью современных веб-технологий.",
+      description:
+        "Увлеченный разработчик, создающий цифровые впечатления с помощью современных веб-технологий. С гордостью поддерживаемый моей потрясающей девушкой.",
       viewProjects: "Посмотреть проекты",
       sourceCode: "Исходный код",
       legacyVersion: "Предыдущая версия",
@@ -243,18 +282,19 @@ export default function MinimalistPortfolio() {
     },
     zh: {
       greeting: "你好！我是Spoody",
-      description: "一位热衷于使用现代网络技术创造数字体验的开发者。",
+      description:
+        "一位热衷于使用现代网络技术创造数字体验的开发者。我得到了我令人惊叹的女朋友的大力支持。",
       viewProjects: "查看项目",
       sourceCode: "源代码",
       legacyVersion: "旧版本",
       skills: "技能",
     },
-  }
+  };
 
-  const t = (key: keyof typeof translations.en) => translations[language][key]
+  const t = (key: keyof typeof translations.en) => translations[language][key];
 
   const greetings = [
-    t('greeting'),
+    t("greeting"),
     "¡Hola! Soy Spoody",
     "Bonjour ! Je suis Spoody",
     "Ciao! Sono Spoody",
@@ -263,24 +303,31 @@ export default function MinimalistPortfolio() {
     "Привет! Я Spoody",
     "你好！我是Spoody",
     "Olá! Eu sou Spoody",
-    "안녕하세요! 저는 Spoody입니다"
-  ]
+    "안녕하세요! 저는 Spoody입니다",
+  ];
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 1] }}>
           <AnimatedStars />
-          <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            enableRotate={false}
+          />
         </Canvas>
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
         <div className="absolute top-4 right-4 flex items-center space-x-4">
-          <Select value={language} onValueChange={(value: typeof language) => setLanguage(value)}>
+          <Select
+            value={language}
+            onValueChange={(value: typeof language) => setLanguage(value)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select a language" />
             </SelectTrigger>
-            <SelectContent className='z-10'>
+            <SelectContent>
               <SelectItem value="en">English</SelectItem>
               <SelectItem value="es">Español</SelectItem>
               <SelectItem value="fr">Français</SelectItem>
@@ -308,13 +355,16 @@ export default function MinimalistPortfolio() {
                   >
                     <Link href="/legacy">
                       <History className="mr-2 h-4 w-4" />
-                      {t('legacyVersion')}
+                      {t("legacyVersion")}
                     </Link>
                   </Button>
                 </motion.div>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-secondary text-secondary-foreground">
-                <p>{t('legacyVersion')}</p>
+              <TooltipContent
+                side="bottom"
+                className="bg-secondary text-secondary-foreground"
+              >
+                <p>{t("legacyVersion")}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -331,12 +381,15 @@ export default function MinimalistPortfolio() {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <Avatar className="w-32 h-32 mx-auto mb-4">
-              <AvatarImage src="https://cdn.discordapp.com/avatars/1260750149446013090/70d2ff6237503b4f171731a2db99f2fa.webp?size=128" alt="Spoody" />
+              <AvatarImage
+                src="https://cdn.discordapp.com/avatars/1260750149446013090/70d2ff6237503b4f171731a2db99f2fa.webp?size=128"
+                alt="Spoody"
+              />
               <AvatarFallback>SP</AvatarFallback>
             </Avatar>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             className="text-4xl sm:text-5xl font-bold text-foreground"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -344,23 +397,25 @@ export default function MinimalistPortfolio() {
           >
             <Typewriter texts={greetings} />
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             className="text-lg text-muted-foreground max-w-[600px] "
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            {t('description')}
+            {t("description")}
           </motion.p>
 
-          <motion.div 
+          <motion.div
             className="space-y-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            <h2 className="text-2xl font-semibold text-foreground">{t('skills')}</h2>
+            <h2 className="text-2xl font-semibold text-foreground">
+              {t("skills")}
+            </h2>
             <div className="flex flex-wrap justify-center gap-6">
               {skillIcons.map(({ name, icon }) => (
                 <SkillIcon key={name} icon={icon} name={name} />
@@ -368,7 +423,7 @@ export default function MinimalistPortfolio() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="flex flex-wrap items-center justify-center gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -381,7 +436,7 @@ export default function MinimalistPortfolio() {
                 asChild
               >
                 <Link href="/projects">
-                  {t('viewProjects')} <ExternalLink className="ml-2 h-4 w-4" />
+                  {t("viewProjects")} <ExternalLink className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </motion.div>
@@ -397,41 +452,41 @@ export default function MinimalistPortfolio() {
                   rel="noopener noreferrer"
                 >
                   <Code className="mr-2 h-4 w-4" />
-                  {t('sourceCode')}
+                  {t("sourceCode")}
                 </a>
               </Button>
             </motion.div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="flex justify-center gap-2 pt-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.5 }}
           >
-            <SocialButton 
-              icon={Github} 
-              href="https://github.com/spooderman11" 
-              label="GitHub Profile" 
+            <SocialButton
+              icon={Github}
+              href="https://github.com/spooderman11"
+              label="GitHub Profile"
             />
-            <SocialButton 
-              icon={Twitter} 
-              href="https://x.com/therealspoody" 
-              label="Twitter Profile" 
+            <SocialButton
+              icon={Twitter}
+              href="https://x.com/therealspoody"
+              label="Twitter Profile"
             />
-            <SocialButton 
-              icon={Mail} 
-              href="mailto:michael@vynx.tech" 
-              label="Email" 
+            <SocialButton
+              icon={Mail}
+              href="mailto:michael@vynx.tech"
+              label="Email"
             />
-            <SocialButton 
-              icon={FaDiscord} 
-              href="https://discord.com/users/1260750149446013090" 
-              label="Discord Profile" 
+            <SocialButton
+              icon={FaDiscord}
+              href="https://discord.com/users/1260750149446013090"
+              label="Discord Profile"
             />
           </motion.div>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
