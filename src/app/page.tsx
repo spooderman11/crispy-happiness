@@ -319,12 +319,12 @@ export default function MinimalistPortfolio() {
         </Canvas>
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
-        <div className="absolute top-4 right-4 flex items-center space-x-4">
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-6xl mx-auto">
           <Select
             value={language}
             onValueChange={(value: typeof language) => setLanguage(value)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Select a language" />
             </SelectTrigger>
             <SelectContent>
@@ -340,34 +340,36 @@ export default function MinimalistPortfolio() {
               <SelectItem value="zh">中文</SelectItem>
             </SelectContent>
           </Select>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
-                    asChild
+          <div className="flex items-center space-x-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <Link href="/legacy">
-                      <History className="mr-2 h-4 w-4" />
-                      {t("legacyVersion")}
-                    </Link>
-                  </Button>
-                </motion.div>
-              </TooltipTrigger>
-              <TooltipContent
-                side="bottom"
-                className="bg-secondary text-secondary-foreground"
-              >
-                <p>{t("legacyVersion")}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
+                      asChild
+                    >
+                      <Link href="/legacy">
+                        <History className="mr-2 h-4 w-4" />
+                        {t("legacyVersion")}
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  className="bg-secondary text-secondary-foreground"
+                >
+                  <p>{t("legacyVersion")}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
