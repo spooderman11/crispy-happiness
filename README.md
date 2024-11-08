@@ -60,7 +60,7 @@ Edit the following in `src/app/page.tsx`:
 
 The project uses Tailwind CSS and shadcn/ui for styling:
 
-- Modify the theme in `tailwind.config.js`
+- Modify the theme in `tailwind.config.ts`
 - Customize component styles in the respective component files
 - Adjust animations by modifying the motion variants
 
