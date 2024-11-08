@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Github, Twitter, Mail, Code } from "lucide-react"
+import { Github, Twitter, Mail, Code, ArrowRight } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { 
   SiReact, 
@@ -174,7 +174,7 @@ export default function StarfieldPortfolio() {
           <Card className="w-full max-w-[800px] bg-background/60 relative">
             <div className="absolute top-2 right-2 z-10">
               <a
-                href="https://github.com/spooderman11/crispy-happiness"
+                href="https://github.com/yourusername/portfolio"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-md transition-colors"
@@ -263,6 +263,13 @@ export default function StarfieldPortfolio() {
                     <FaDiscord className="mr-2 h-4 w-4" /> Contact on Discord
                   </Button>
                 </motion.div>
+                <Button
+                  onClick={() => window.location.href = '/projects'}
+                  variant="outline"
+                  className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
+                >
+                  View Projects <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </CardFooter>
             </motion.div>
           </Card>
