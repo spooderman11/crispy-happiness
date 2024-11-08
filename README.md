@@ -2,7 +2,6 @@
 
 A modern, animated portfolio template featuring a stunning 3D starfield background, smooth animations, and a clean, professional design. Built with Next.js, Three.js, and Tailwind CSS.
 
-
 ## 📸 Screenshots
 
 ![Preview](preview.png)
@@ -18,11 +17,9 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 - Social media integration
 - Easy to customize
 
-
 ## 📦 Installation
 
 1. Clone the repository:
-
 
 ```shellscript
  git clone https://github.com/spooderman11/crispy-happiness.git
@@ -30,17 +27,39 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 
 2. Install dependencies:
 
+This project uses "PNPM" as the default package manager. If you don't have it installed, you can install it by running the following command:
+
+```shellscript
+npm install -g pnpm
+```
+
+Then, install the dependencies:
 
 ```shellscript
 cd crispy-happiness
 npm install
 ```
 
+If you prefer to use npm or yarn, delete the `pnpm-lock.yaml` file and run `npm install` or `yarn install` instead.
+
 3. Run the development server:
 
+for pnpm:
+
+```shellscript
+ pnpm dev
+```
+
+for npm:
 
 ```shellscript
  npm run dev
+```
+
+for yarn:
+
+```shellscript
+ yarn dev
 ```
 
 ## 🎨 Customization
@@ -55,7 +74,6 @@ Edit the following in `src/app/page.tsx`:
 - Customize skills icons
 - Change social media links
 
-
 ### Styling
 
 The project uses Tailwind CSS and shadcn/ui for styling:
@@ -64,7 +82,6 @@ The project uses Tailwind CSS and shadcn/ui for styling:
 - Customize component styles in the respective component files
 - Adjust animations by modifying the motion variants
 
-
 ### Starfield
 
 Customize the starfield background in the `AnimatedStars` component:
@@ -72,7 +89,6 @@ Customize the starfield background in the `AnimatedStars` component:
 - Adjust star count, depth, and radius
 - Modify rotation speed and animation parameters
 - Change colors and saturation
-
 
 ## 🤝 Contributing
 
@@ -84,7 +100,6 @@ Contributions are welcome! Feel free to:
 4. Commit your changes (`git commit -m 'Add some amazing feature'`)
 5. Push to the branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request
-
 
 ## 📄 License
 
@@ -110,7 +125,6 @@ limitations under the License.
 - UI components from [shadcn/ui](https://ui.shadcn.com/)
 - 3D graphics with [Three.js](https://threejs.org/)
 - Icons from [React Icons](https://react-icons.github.io/react-icons/)
-
 
 ## 💖 Support
 
