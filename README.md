@@ -22,6 +22,7 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 - Skills showcase with icons
 - Social media integration
 - Easy to customize
+- SEO friendly
 
 ## 📦 Installation
 
