@@ -4,7 +4,13 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 
 ## 📸 Screenshots
 
-![Preview](preview.png)
+### New Preview
+
+![New Preview](new.png)
+
+### Legacy Preview
+
+![Legacy Preview](preview.png)
 
 ## 🚀 Features
 
@@ -21,45 +27,63 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 
 1. Clone the repository:
 
-```shellscript
- git clone https://github.com/spooderman11/crispy-happiness.git
+```shell
+git clone https://github.com/spooderman11/crispy-happiness.git
 ```
 
 2. Install dependencies:
 
+### Using PNPM (default):
+
 This project uses "PNPM" as the default package manager. If you don't have it installed, you can install it by running the following command:
 
-```shellscript
+```shell
 npm install -g pnpm
 ```
 
 Then, install the dependencies:
 
-```shellscript
+```shell
+cd crispy-happiness
+pnpm install
+```
+
+### Using npm:
+
+If you prefer to use npm, delete the `pnpm-lock.yaml` file and run:
+
+```shell
 cd crispy-happiness
 npm install
 ```
 
-If you prefer to use npm or yarn, delete the `pnpm-lock.yaml` file and run `npm install` or `yarn install` instead.
+### Using yarn:
+
+If you prefer to use yarn, delete the `pnpm-lock.yaml` file and run:
+
+```shell
+cd crispy-happiness
+yarn install
+```
 
 3. Run the development server:
 
-for pnpm:
+### Using PNPM:
 
-```shellscript
- pnpm dev
+```shell
+pnpm dev
 ```
 
-for npm:
+### Using npm:
 
-```shellscript
- npm run dev
+```shell
+npm run dev
 ```
 
-for yarn:
+### Using yarn:
 
-```shellscript
- yarn dev
+```shell
+yarn dev
 ```
 
 ## 🎨 Customization
