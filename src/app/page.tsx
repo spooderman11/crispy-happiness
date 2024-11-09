@@ -410,7 +410,7 @@ export default function MinimalistPortfolio() {
           </motion.div>
 
           <motion.h1
-            className="text-4xl sm:text-5xl font-bold text-foreground text-center"
+            className="text-4xl sm:text-5xl font-bold text-foreground"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
@@ -419,7 +419,7 @@ export default function MinimalistPortfolio() {
           </motion.h1>
 
           <motion.p
-            className="text-lg text-muted-foreground max-w-[600px] text-center"
+            className="text-lg text-muted-foreground max-w-[600px] mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
@@ -428,7 +428,7 @@ export default function MinimalistPortfolio() {
           </motion.p>
 
           <motion.div
-            className="space-y-4"
+            className="space-y-4 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
@@ -436,7 +436,7 @@ export default function MinimalistPortfolio() {
             <h2 className="text-2xl font-semibold text-foreground">
               {t("skills")}
             </h2>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-4">
               {skillIcons.map(({ name, icon }) => (
                 <SkillIcon key={name} icon={icon} name={name} />
               ))}
@@ -444,7 +444,7 @@ export default function MinimalistPortfolio() {
           </motion.div>
 
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-4"
+            className="flex flex-wrap items-center justify-center gap-4 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.5 }}
