@@ -23,6 +23,7 @@ A modern, animated portfolio template featuring a stunning 3D starfield backgrou
 - Social media integration
 - Easy to customize
 - SEO friendly
+- Add faggots
 
 ## 📦 Installation
 
