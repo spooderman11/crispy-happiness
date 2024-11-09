@@ -325,7 +325,7 @@ export default function MinimalistPortfolio() {
   ];
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+    <div className="relative min-h-screen w-full overflow-hidden bg-background text-center">
       <div className="absolute inset-0">
         <Canvas camera={{ position: [0, 0, 1] }}>
           <AnimatedStars />
@@ -336,7 +336,7 @@ export default function MinimalistPortfolio() {
           />
         </Canvas>
       </div>
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 text-center">
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-6xl mx-auto">
           <Select
             value={language}
@@ -410,7 +410,7 @@ export default function MinimalistPortfolio() {
           </motion.div>
 
           <motion.h1
-            className="text-4xl sm:text-5xl font-bold text-foreground"
+            className="text-4xl sm:text-5xl font-bold text-foreground text-center"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
@@ -419,7 +419,7 @@ export default function MinimalistPortfolio() {
           </motion.h1>
 
           <motion.p
-            className="text-lg text-muted-foreground max-w-[600px] "
+            className="text-lg text-muted-foreground max-w-[600px] text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
