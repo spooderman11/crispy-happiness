@@ -8,7 +8,7 @@ async function fetchDiscordData(userId: string) {
   }
 
   try {
-    // Fetch user data
+    // First fetch the user data
     const userResponse = await fetch(
       `${DISCORD_API_ENDPOINT}/users/${userId}`,
       {
@@ -16,7 +16,6 @@ async function fetchDiscordData(userId: string) {
           Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
           "Content-Type": "application/json",
         },
-        next: { revalidate: 15 }, // Cache for 15 seconds
       }
     );
 
@@ -28,20 +27,21 @@ async function fetchDiscordData(userId: string) {
 
     const userData = await userResponse.json();
 
-    // Fetch guild member data (includes presence)
+    // Then fetch the guild member data which includes presence
     const guildId = process.env.DISCORD_GUILD_ID;
     if (!guildId) {
       throw new Error("Discord guild ID is not configured");
     }
 
+    // Use the new v10 endpoint that includes presence data
     const memberResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}`,
+      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}?with_presence=true&with_member=true`,
       {
         headers: {
           Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
           "Content-Type": "application/json",
         },
-        next: { revalidate: 15 }, // Cache for 15 seconds
+        cache: "no-store",
       }
     );
 
@@ -53,21 +53,44 @@ async function fetchDiscordData(userId: string) {
 
     const memberData = await memberResponse.json();
 
-    // Return combined data
+    // Fetch presence data specifically
+    const presenceResponse = await fetch(
+      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/presences/${userId}`,
+      {
+        headers: {
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    let presenceData = { status: "offline", activities: [] };
+    if (presenceResponse.ok) {
+      presenceData = await presenceResponse.json();
+    }
+
+    // Combine all the data, prioritizing presence data
     return {
       id: userData.id,
       username: userData.username,
       globalName: userData.global_name,
       avatar: userData.avatar,
       discriminator: userData.discriminator,
-      status: memberData.status || "offline",
-      activities: memberData.activities || [],
+      presence: {
+        status: presenceData.status || memberData.presence?.status || "offline",
+        activities:
+          presenceData.activities || memberData.presence?.activities || [],
+      },
+      member: {
+        nickname: memberData.nick,
+        roles: memberData.roles,
+        joinedAt: memberData.joined_at,
+      },
     };
   } catch (error) {
     console.error("Error fetching Discord data:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to fetch Discord data"
-    );
+    throw error;
   }
 }
 
@@ -85,9 +108,13 @@ export async function GET(request: Request) {
 
     const discordData = await fetchDiscordData(userId);
 
+    // Log the response for debugging
+    console.log("Discord API Response:", JSON.stringify(discordData, null, 2));
+
     return NextResponse.json(discordData, {
       headers: {
-        "Cache-Control": "no-store",
+        "Cache-Control": "no-store, must-revalidate",
+        Pragma: "no-cache",
       },
     });
   } catch (error) {
@@ -97,7 +124,12 @@ export async function GET(request: Request) {
         error: "Failed to fetch Discord data",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
   }
 }
