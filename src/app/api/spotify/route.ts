@@ -62,29 +62,15 @@ const getNowPlaying = async () => {
 
 export async function GET() {
   try {
-    // Log environment variables (redacted for security)
-    console.log('Spotify credentials present:', {
-      hasClientId: !!client_id,
-      hasClientSecret: !!client_secret,
-      hasRefreshToken: !!refresh_token,
-    })
-
     const response = await getNowPlaying()
 
-    if (response.status === 204) {
-      console.log('No track currently playing')
-      return NextResponse.json({ isPlaying: false })
-    }
-
-    if (response.status > 400) {
-      console.error('Error response from Spotify API:', response.status)
+    if (response.status === 204 || response.status > 400) {
       return NextResponse.json({ isPlaying: false })
     }
 
     const song = await response.json()
 
     if (!song?.item) {
-      console.log('No track data in response')
       return NextResponse.json({ isPlaying: false })
     }
 

@@ -180,12 +180,12 @@ const skillIcons = [
 ]
 
 function NowPlaying() {
-  const [nowPlaying, setNowPlaying] = useState<any>(null)
+  const [trackInfo, setTrackInfo] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const prevDataRef = useRef<any>(null)
 
-  const fetchNowPlaying = async () => {
+  const fetchTrackInfo = async () => {
     setIsLoading(true)
     setError(null)
     try {
@@ -203,7 +203,7 @@ function NowPlaying() {
 
       // Only update state if the response is different
       if (JSON.stringify(prevDataRef.current) !== JSON.stringify(data)) {
-        setNowPlaying(data)
+        setTrackInfo(data)
         prevDataRef.current = data
       }
     } catch (error) {
@@ -219,13 +219,11 @@ function NowPlaying() {
 
     const fetchData = async () => {
       if (!mounted) return
-      await fetchNowPlaying()
+      await fetchTrackInfo()
     }
 
-    const interval: NodeJS.Timeout = setInterval(fetchData, 5000) // Poll every 5 seconds
-
     fetchData() // Initial fetch
-
+    const interval = setInterval(fetchData, 5000) // Poll every 5 seconds
 
     return () => {
       mounted = false
@@ -233,24 +231,19 @@ function NowPlaying() {
     }
   }, [])
 
-  // Debug output
-  useEffect(() => {
-    console.log('Current nowPlaying state:', nowPlaying)
-  }, [nowPlaying])
-
   if (error) {
     console.error('NowPlaying error:', error)
-    return null // Or you could show an error state
+    return null
   }
 
-  if (!nowPlaying || !nowPlaying.isPlaying) {
+  if (!trackInfo) {
     return null
   }
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={nowPlaying.title + nowPlaying.artist}
+        key={trackInfo.title + trackInfo.artist}
         initial={{ opacity: 0, x: -20 }}
         animate={{ 
           opacity: 1, 
@@ -287,8 +280,8 @@ function NowPlaying() {
           }}
         >
           <Image
-            src={nowPlaying.albumImageUrl}
-            alt={nowPlaying.album}
+            src={trackInfo.albumImageUrl}
+            alt={trackInfo.album}
             width={60}
             height={60}
             className="rounded-md"
@@ -307,12 +300,12 @@ function NowPlaying() {
                 delay: 0.2
               }
             }}
-            href={nowPlaying.songUrl}
+            href={trackInfo.songUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium hover:underline"
           >
-            {nowPlaying.title}
+            {trackInfo.title}
           </motion.a>
           <motion.p 
             initial={{ opacity: 0, x: -10 }}
@@ -328,7 +321,7 @@ function NowPlaying() {
             }}
             className="text-xs text-muted-foreground"
           >
-            {nowPlaying.artist}
+            {trackInfo.artist}
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, x: -10 }}
@@ -344,9 +337,9 @@ function NowPlaying() {
             }}
             className="flex items-center mt-1"
           >
-            <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : 'text-green-500'}`} />
+            <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
             <span className="text-xs text-muted-foreground">
-              {isLoading ? 'Updating...' : 'Playing on Spotify'}
+              {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
             </span>
           </motion.div>
         </div>
