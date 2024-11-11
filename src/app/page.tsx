@@ -199,7 +199,6 @@ function NowPlaying() {
       }
 
       const data = await res.json()
-      console.log('Spotify API response:', data) // Debug log
 
       // Only update state if the response is different
       if (JSON.stringify(prevDataRef.current) !== JSON.stringify(data)) {
@@ -207,7 +206,6 @@ function NowPlaying() {
         prevDataRef.current = data
       }
     } catch (error) {
-      console.error('Error fetching Spotify data:', error)
       setError(error instanceof Error ? error.message : 'Failed to fetch')
     } finally {
       setIsLoading(false)
