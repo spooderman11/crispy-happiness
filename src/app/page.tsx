@@ -182,16 +182,24 @@ const skillIcons = [
 function NowPlaying() {
   const [nowPlaying, setNowPlaying] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const prevDataRef = useRef<any>(null)
 
   const fetchNowPlaying = async () => {
     setIsLoading(true)
+    setError(null)
     try {
       const res = await fetch('/api/spotify', {
         cache: 'no-store',
         next: { revalidate: 0 }
       })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
       const data = await res.json()
+      console.log('Spotify API response:', data) // Debug log
 
       // Only update state if the response is different
       if (JSON.stringify(prevDataRef.current) !== JSON.stringify(data)) {
@@ -200,6 +208,7 @@ function NowPlaying() {
       }
     } catch (error) {
       console.error('Error fetching Spotify data:', error)
+      setError(error instanceof Error ? error.message : 'Failed to fetch')
     } finally {
       setIsLoading(false)
     }
@@ -207,6 +216,7 @@ function NowPlaying() {
 
   useEffect(() => {
     let mounted = true
+    let interval: NodeJS.Timeout
 
     const fetchData = async () => {
       if (!mounted) return
@@ -215,61 +225,22 @@ function NowPlaying() {
 
     fetchData() // Initial fetch
 
-    const interval = setInterval(fetchData, 5000) // Poll every 5 seconds
+    interval = setInterval(fetchData, 5000) // Poll every 5 seconds
 
     return () => {
       mounted = false
-      clearInterval(interval)
+      if (interval) clearInterval(interval)
     }
   }, [])
 
-  const containerVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      x: -20,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }
-    }
-  }
+  // Debug output
+  useEffect(() => {
+    console.log('Current nowPlaying state:', nowPlaying)
+  }, [nowPlaying])
 
-  const contentVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { 
-      opacity: 1, 
-      x: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 100,
-        damping: 15
-      }
-    }
+  if (error) {
+    console.error('NowPlaying error:', error)
+    return null // Or you could show an error state
   }
 
   if (!nowPlaying || !nowPlaying.isPlaying) {
@@ -280,15 +251,40 @@ function NowPlaying() {
     <AnimatePresence mode="wait">
       <motion.div
         key={nowPlaying.title + nowPlaying.artist}
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ 
+          opacity: 1, 
+          x: 0,
+          transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }
+        }}
+        exit={{ 
+          opacity: 0, 
+          x: -20,
+          transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }
+        }}
         className="fixed bottom-4 left-4 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center space-x-4"
       >
         <motion.div 
           className="flex-shrink-0"
-          variants={itemVariants}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            transition: {
+              type: "spring",
+              stiffness: 100,
+              damping: 15,
+              delay: 0.1
+            }
+          }}
         >
           <Image
             src={nowPlaying.albumImageUrl}
@@ -298,35 +294,62 @@ function NowPlaying() {
             className="rounded-md"
           />
         </motion.div>
-        <motion.div 
-          className="flex flex-col"
-          variants={contentVariants}
-        >
+        <div className="flex flex-col">
           <motion.a
-            variants={itemVariants}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ 
+              opacity: 1, 
+              x: 0,
+              transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+                delay: 0.2
+              }
+            }}
             href={nowPlaying.songUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium hover:underline text-left"
+            className="text-sm font-medium hover:underline"
           >
             {nowPlaying.title}
           </motion.a>
           <motion.p 
-            variants={itemVariants}
-            className="text-xs text-muted-foreground text-left"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ 
+              opacity: 1, 
+              x: 0,
+              transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+                delay: 0.3
+              }
+            }}
+            className="text-xs text-muted-foreground"
           >
             {nowPlaying.artist}
           </motion.p>
           <motion.div 
-            variants={itemVariants}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ 
+              opacity: 1, 
+              x: 0,
+              transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+                delay: 0.4
+              }
+            }}
             className="flex items-center mt-1"
           >
             <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : 'text-green-500'}`} />
             <span className="text-xs text-muted-foreground">
-              Playing on Spotify
+              {isLoading ? 'Updating...' : 'Playing on Spotify'}
             </span>
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
     </AnimatePresence>
   )

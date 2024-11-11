@@ -9,68 +9,113 @@ const NOW_PLAYING_ENDPOINT = `https://api.spotify.com/v1/me/player/currently-pla
 const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`
 
 const getAccessToken = async () => {
-  const response = await fetch(TOKEN_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: refresh_token || '',
-    }).toString(),
-  })
+  if (!client_id || !client_secret || !refresh_token) {
+    throw new Error('Missing Spotify credentials')
+  }
 
-  return response.json()
+  try {
+    const response = await fetch(TOKEN_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${basic}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token,
+      }).toString(),
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      throw new Error(`Token request failed: ${response.status} ${response.statusText}`)
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error('Error getting access token:', error)
+    throw error
+  }
 }
 
 const getNowPlaying = async () => {
-  const { access_token } = await getAccessToken()
+  try {
+    const { access_token } = await getAccessToken()
 
-  return fetch(NOW_PLAYING_ENDPOINT, {
-    headers: {
-      Authorization: `Bearer ${access_token}`,
-    },
-    cache: 'no-store',
-  })
+    const response = await fetch(NOW_PLAYING_ENDPOINT, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+      cache: 'no-store',
+    })
+
+    if (!response.ok && response.status !== 204) {
+      throw new Error(`Now playing request failed: ${response.status} ${response.statusText}`)
+    }
+
+    return response
+  } catch (error) {
+    console.error('Error getting now playing:', error)
+    throw error
+  }
 }
 
 export async function GET() {
-  const response = await getNowPlaying()
+  try {
+    // Log environment variables (redacted for security)
+    console.log('Spotify credentials present:', {
+      hasClientId: !!client_id,
+      hasClientSecret: !!client_secret,
+      hasRefreshToken: !!refresh_token,
+    })
 
-  if (response.status === 204 || response.status > 400) {
-    return NextResponse.json({ isPlaying: false }, { status: 200 })
+    const response = await getNowPlaying()
+
+    if (response.status === 204) {
+      console.log('No track currently playing')
+      return NextResponse.json({ isPlaying: false })
+    }
+
+    if (response.status > 400) {
+      console.error('Error response from Spotify API:', response.status)
+      return NextResponse.json({ isPlaying: false })
+    }
+
+    const song = await response.json()
+
+    if (!song?.item) {
+      console.log('No track data in response')
+      return NextResponse.json({ isPlaying: false })
+    }
+
+    const isPlaying = song.is_playing
+    const title = song.item.name
+    const artist = song.item.artists.map((_artist: any) => _artist.name).join(', ')
+    const album = song.item.album.name
+    const albumImageUrl = song.item.album.images[0].url
+    const songUrl = song.item.external_urls.spotify
+
+    return NextResponse.json({
+      isPlaying,
+      title,
+      artist,
+      album,
+      albumImageUrl,
+      songUrl,
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    })
+  } catch (error) {
+    console.error('Error in Spotify API route:', error)
+    return NextResponse.json(
+      { isPlaying: false, error: 'Failed to fetch Spotify data' },
+      { status: 500 }
+    )
   }
-
-  const song = await response.json()
-
-  if (!song || !song.item) {
-    return NextResponse.json({ isPlaying: false }, { status: 200 })
-  }
-
-  const isPlaying = song.is_playing
-  const title = song.item.name
-  const artist = song.item.artists.map((_artist: any) => _artist.name).join(', ')
-  const album = song.item.album.name
-  const albumImageUrl = song.item.album.images[0].url
-  const songUrl = song.item.external_urls.spotif
-
-
-  return NextResponse.json({
-    isPlaying,
-    title,
-    artist,
-    album,
-    albumImageUrl,
-    songUrl,
-  }, {
-    status: 200,
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-    },
-  })
 }
 
 export const runtime = 'edge'
