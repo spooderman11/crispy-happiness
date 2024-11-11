@@ -1,14 +1,77 @@
 import { NextResponse } from "next/server";
+import { WebSocket } from "ws";
 
 const DISCORD_API_ENDPOINT = "https://discord.com/api/v10";
+const DISCORD_GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json";
+
+let ws: WebSocket | null = null;
+const presenceCache = new Map<string, any>();
+
+// Initialize WebSocket connection
+function initializeWebSocket(token: string) {
+  if (ws) return;
+
+  ws = new WebSocket(DISCORD_GATEWAY_URL);
+
+  ws.on("open", () => {
+    // Identify with Discord Gateway
+    if (ws) {
+      ws.send(
+        JSON.stringify({
+          op: 2, // Identify opcode
+          d: {
+            token: token,
+            intents: 32767, // All intents
+            properties: {
+              os: "linux",
+              browser: "chrome",
+              device: "chrome",
+            },
+            presence: {
+              activities: [],
+              status: "online",
+              since: 0,
+              afk: false,
+            },
+          },
+        })
+      );
+    }
+  });
+
+  ws.on("message", (data: string) => {
+    try {
+      const payload = JSON.parse(data);
+      if (payload.t === "PRESENCE_UPDATE") {
+        const userId = payload.d.user.id;
+        presenceCache.set(userId, payload.d);
+      }
+    } catch (error) {
+      console.error("WebSocket message error:", error);
+    }
+  });
+
+  ws.on("close", () => {
+    ws = null;
+    setTimeout(() => initializeWebSocket(token), 5000); // Reconnect after 5 seconds
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+    ws?.close();
+  });
+}
 
 async function fetchDiscordData(userId: string) {
   if (!process.env.DISCORD_BOT_TOKEN) {
     throw new Error("Discord bot token is not configured");
   }
 
+  // Initialize WebSocket if not already connected
+  initializeWebSocket(process.env.DISCORD_BOT_TOKEN);
+
   try {
-    // First, try to fetch the user data
+    // Fetch user data
     const userResponse = await fetch(
       `${DISCORD_API_ENDPOINT}/users/${userId}`,
       {
@@ -16,7 +79,6 @@ async function fetchDiscordData(userId: string) {
           Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
           "Content-Type": "application/json",
         },
-        next: { revalidate: 30 }, // Cache for 30 seconds
       }
     );
 
@@ -28,49 +90,30 @@ async function fetchDiscordData(userId: string) {
 
     const userData = await userResponse.json();
 
-    // Then fetch the member data from your guild with presence data
-    const guildId = process.env.DISCORD_GUILD_ID;
-    if (!guildId) {
-      throw new Error("Discord guild ID is not configured");
-    }
+    // Get presence data from cache or fetch it
+    let presenceData = presenceCache.get(userId) || {
+      status: "offline",
+      activities: [],
+    };
 
-    const memberResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}?with_presence=true`,
-      {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 30 }, // Cache for 30 seconds
-      }
-    );
-
-    if (!memberResponse.ok) {
-      throw new Error(
-        `Discord API returned ${memberResponse.status} for member data`
+    // If not in cache, try to fetch from gateway
+    if (!presenceData && process.env.DISCORD_GUILD_ID) {
+      const presenceResponse = await fetch(
+        `${DISCORD_API_ENDPOINT}/guilds/${process.env.DISCORD_GUILD_ID}/presences/${userId}`,
+        {
+          headers: {
+            Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-    }
 
-    const memberData = await memberResponse.json();
-
-    // Fetch presence data separately using the gateway endpoint
-    const presenceResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/presences/${userId}`,
-      {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 30 }, // Cache for 30 seconds
+      if (presenceResponse.ok) {
+        presenceData = await presenceResponse.json();
+        presenceCache.set(userId, presenceData);
       }
-    );
-
-    let presenceData = { status: "offline", activities: [] };
-    if (presenceResponse.ok) {
-      presenceData = await presenceResponse.json();
     }
 
-    // Combine and format the data
     return {
       id: userData.id,
       username: userData.username,
@@ -78,9 +121,9 @@ async function fetchDiscordData(userId: string) {
       avatar: userData.avatar,
       discriminator: userData.discriminator,
       presence: {
-        status: presenceData.status || memberData.presence?.status || "offline",
-        activities:
-          presenceData.activities || memberData.presence?.activities || [],
+        status: presenceData.status || "offline",
+        activities: presenceData.activities || [],
+        clientStatus: presenceData.client_status || {},
       },
     };
   } catch (error) {
@@ -107,7 +150,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(discordData, {
       headers: {
-        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=15",
+        "Cache-Control": "no-store",
       },
     });
   } catch (error) {
@@ -117,12 +160,7 @@ export async function GET(request: Request) {
         error: "Failed to fetch Discord data",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      {
-        status: 500,
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      }
+      { status: 500 }
     );
   }
 }
