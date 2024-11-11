@@ -271,7 +271,7 @@ function NowPlaying() {
                   alt={trackInfo?.album || "Album placeholder"}
                   layout="fill"
                   objectFit="cover"
-                  className="rounded-md"
+                  className="rounded-md align-middle"
                 />
               </div>
               <div className="flex flex-col items-start overflow-hidden flex-grow pt-1">
