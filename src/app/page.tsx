@@ -267,7 +267,7 @@ function NowPlaying() {
             <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-2 flex items-start space-x-4 overflow-hidden w-[300px]">
               <div className="flex-shrink-0 w-14 h-14 relative">
                 <Image
-                  src={trackInfo?.albumImageUrl || "/placeholder.svg?height=56&width=56"}
+                  src={trackInfo?.albumImageUrl || "https://cdn.vynx.tech/static/placeholder.svg"}
                   alt={trackInfo?.album || "Album placeholder"}
                   layout="fill"
                   objectFit="cover"
