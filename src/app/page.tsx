@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Github, Twitter, Mail, ExternalLink, Code, History, Globe, Music } from "lucide-react"
+import { Github, Twitter, Mail, ExternalLink, Code, History, Globe, Music, ChevronDown, ChevronUp } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import { 
   SiReact, 
@@ -183,6 +183,7 @@ function NowPlaying() {
   const [trackInfo, setTrackInfo] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isVisible, setIsVisible] = useState(true)
   const prevDataRef = useRef<any>(null)
 
   const fetchTrackInfo = async () => {
@@ -199,13 +200,14 @@ function NowPlaying() {
       }
 
       const data = await res.json()
+      console.log('Spotify API response:', data)
 
-      // Only update state if the response is different
       if (JSON.stringify(prevDataRef.current) !== JSON.stringify(data)) {
         setTrackInfo(data)
         prevDataRef.current = data
       }
     } catch (error) {
+      console.error('Error fetching Spotify data:', error)
       setError(error instanceof Error ? error.message : 'Failed to fetch')
     } finally {
       setIsLoading(false)
@@ -220,8 +222,8 @@ function NowPlaying() {
       await fetchTrackInfo()
     }
 
-    fetchData() // Initial fetch
-    const interval = setInterval(fetchData, 5000) // Poll every 5 seconds
+    fetchData()
+    const interval = setInterval(fetchData, 5000)
 
     return () => {
       mounted = false
@@ -241,106 +243,68 @@ function NowPlaying() {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={trackInfo.title + trackInfo.artist}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ 
-          opacity: 1, 
-          x: 0,
-          transition: {
-            type: "spring",
-            stiffness: 100,
-            damping: 15
-          }
+        key={isVisible ? 'visible' : 'hidden'}
+        initial={isVisible ? { opacity: 0, y: 20 } : { opacity: 0, y: 100 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
+        exit={{ opacity: 0, y: 100 }}
+        transition={{
+          type: "spring",
+          stiffness: 100,
+          damping: 15
         }}
-        exit={{ 
-          opacity: 0, 
-          x: -20,
-          transition: {
-            type: "spring",
-            stiffness: 100,
-            damping: 15
-          }
-        }}
-        className="fixed bottom-4 left-4 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center space-x-4"
+        className="fixed bottom-4 left-4 flex flex-col items-start"
       >
-        <motion.div 
-          className="flex-shrink-0"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1,
-            transition: {
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsVisible(!isVisible)}
+          className="mb-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full p-2"
+          aria-label={isVisible ? "Hide Spotify card" : "Show Spotify card"}
+        >
+          {isVisible ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        </Button>
+        {isVisible && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{
               type: "spring",
               stiffness: 100,
-              damping: 15,
-              delay: 0.1
-            }
-          }}
-        >
-          <Image
-            src={trackInfo.albumImageUrl}
-            alt={trackInfo.album}
-            width={60}
-            height={60}
-            className="rounded-md"
-          />
-        </motion.div>
-        <div className="flex flex-col">
-          <motion.a
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ 
-              opacity: 1, 
-              x: 0,
-              transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-                delay: 0.2
-              }
+              damping: 15
             }}
-            href={trackInfo.songUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium hover:underline text-left"
+            className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center space-x-4"
           >
-            {trackInfo.title}
-          </motion.a>
-          <motion.p 
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ 
-              opacity: 1, 
-              x: 0,
-              transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-                delay: 0.3
-              }
-            }}
-            className="text-xs text-muted-foreground text-left"
-          >
-            {trackInfo.artist}
-          </motion.p>
-          <motion.div 
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ 
-              opacity: 1, 
-              x: 0,
-              transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-                delay: 0.4
-              }
-            }}
-            className="flex items-center mt-1"
-          >
-            <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
-            <span className="text-xs text-muted-foreground">
-              {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
-            </span>
+            <div className="flex-shrink-0">
+              <Image
+                src={trackInfo.albumImageUrl}
+                alt={trackInfo.album}
+                width={60}
+                height={60}
+                className="rounded-md"
+              />
+            </div>
+            <div className="flex flex-col">
+              <a
+                href={trackInfo.songUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium hover:underline text-left"
+              >
+                {trackInfo.title}
+              </a>
+              <p className="text-xs text-muted-foreground text-left">
+                {trackInfo.artist}
+              </p>
+              <div className="flex items-center mt-1">
+                <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
+                <span className="text-xs text-muted-foreground">
+                  {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
+                </span>
+              </div>
+            </div>
           </motion.div>
-        </div>
+        )}
       </motion.div>
     </AnimatePresence>
   )
