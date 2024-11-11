@@ -301,7 +301,7 @@ function NowPlaying() {
             href={trackInfo.songUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium hover:underline"
+            className="text-sm font-medium hover:underline text-left"
           >
             {trackInfo.title}
           </motion.a>
@@ -317,7 +317,7 @@ function NowPlaying() {
                 delay: 0.3
               }
             }}
-            className="text-xs text-muted-foreground"
+            className="text-xs text-muted-foreground text-left"
           >
             {trackInfo.artist}
           </motion.p>
