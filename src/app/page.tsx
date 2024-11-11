@@ -241,29 +241,50 @@ function NowPlaying() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 flex flex-col items-start">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsVisible(!isVisible)}
-        className="mb-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full p-2 z-10"
-        aria-label={isVisible ? "Hide Spotify card" : "Show Spotify card"}
+    <motion.div
+      className="fixed left-4 flex flex-col items-start"
+      animate={{
+        bottom: isVisible ? '1rem' : '4rem',
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }}
+    >
+      <motion.div
+        animate={{
+          rotate: isVisible ? 0 : 180,
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 200,
+          damping: 20
+        }}
       >
-        {isVisible ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-      </Button>
-      <AnimatePresence mode="wait">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsVisible(!isVisible)}
+          className="mb-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full p-2 z-10"
+          aria-label={isVisible ? "Hide Spotify player" : "Show Spotify player"}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </motion.div>
+      <AnimatePresence mode="popLayout">
         {isVisible && (
           <motion.div
             key="spotify-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: 20, height: 0 }}
             transition={{
               type: "spring",
               stiffness: 100,
               damping: 15
             }}
-            className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-start space-x-4 max-w-[300px]"
+            className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-start space-x-4 max-w-[300px] overflow-hidden"
           >
             <div className="flex-shrink-0">
               <Image
@@ -296,7 +317,7 @@ function NowPlaying() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }
 
