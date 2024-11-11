@@ -57,6 +57,7 @@ import {
 } from "react-icons/si";
 import Link from "next/link";
 import Image from "next/image";
+import DiscordProfile from "@/components/discord-profile";
 
 // Move AnimatedStars component definition to the top
 function AnimatedStars() {
@@ -645,6 +646,7 @@ export default function MinimalistPortfolio() {
           </motion.div>
         </motion.div>
         <NowPlaying />
+        <DiscordProfile userId="1260750149446013090" />
       </div>
     </div>
   );
