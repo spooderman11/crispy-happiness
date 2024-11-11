@@ -56,39 +56,54 @@ export async function GET() {
     if (nowPlayingResponse.status === 200) {
       const song = await nowPlayingResponse.json()
       
+      // If not actually playing, get recently played
+      if (!song.is_playing) {
+        const recentlyPlayedResponse = await getRecentlyPlayed(access_token)
+        const recentlyPlayed = await recentlyPlayedResponse.json()
+        
+        if (recentlyPlayed.items?.length > 0) {
+          const mostRecent = recentlyPlayed.items[0]
+          return NextResponse.json({
+            isPlaying: false,
+            title: mostRecent.track.name,
+            artist: mostRecent.track.artists.map((_artist: any) => _artist.name).join(', '),
+            album: mostRecent.track.album.name,
+            albumImageUrl: mostRecent.track.album.images[0].url,
+            songUrl: mostRecent.track.external_urls.spotify,
+            lastPlayed: mostRecent.played_at
+          }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
+        }
+      }
+      
+      // Return currently playing song
       return NextResponse.json({
         isPlaying: song.is_playing,
         title: song.item.name,
         artist: song.item.artists.map((_artist: any) => _artist.name).join(', '),
         album: song.item.album.name,
         albumImageUrl: song.item.album.images[0].url,
-        songUrl: song.item.external_urls.spotify,
+        songUrl: song.item.external_urls.spotify
       }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
     }
 
     // If no track is playing, get recently played
     const recentlyPlayedResponse = await getRecentlyPlayed(access_token)
-    
-    if (!recentlyPlayedResponse.ok) {
-      throw new Error('Failed to fetch recently played tracks')
-    }
-
     const recentlyPlayed = await recentlyPlayedResponse.json()
 
     if (!recentlyPlayed.items?.length) {
-      return NextResponse.json({ isPlaying: false }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
+      return NextResponse.json({ 
+        isPlaying: false 
+      }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
     }
 
     const mostRecent = recentlyPlayed.items[0]
-    const track = mostRecent.track
-
     return NextResponse.json({
       isPlaying: false,
-      title: track.name,
-      artist: track.artists.map((_artist: any) => _artist.name).join(', '),
-      album: track.album.name,
-      albumImageUrl: track.album.images[0].url,
-      songUrl: track.external_urls.spotify,
+      title: mostRecent.track.name,
+      artist: mostRecent.track.artists.map((_artist: any) => _artist.name).join(', '),
+      album: mostRecent.track.album.name,
+      albumImageUrl: mostRecent.track.album.images[0].url,
+      songUrl: mostRecent.track.external_urls.spotify,
       lastPlayed: mostRecent.played_at
     }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
 
