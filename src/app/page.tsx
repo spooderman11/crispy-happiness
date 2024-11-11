@@ -216,7 +216,7 @@ function NowPlaying() {
 
   useEffect(() => {
     let mounted = true
-    let interval: NodeJS.Timeout
+    const interval: NodeJS.Timeout = setInterval(fetchData, 5000) // Poll every 5 seconds
 
     const fetchData = async () => {
       if (!mounted) return
@@ -225,11 +225,10 @@ function NowPlaying() {
 
     fetchData() // Initial fetch
 
-    interval = setInterval(fetchData, 5000) // Poll every 5 seconds
 
     return () => {
       mounted = false
-      if (interval) clearInterval(interval)
+      clearInterval(interval)
     }
   }, [])
 
