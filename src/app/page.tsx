@@ -236,62 +236,64 @@ function NowPlaying() {
     return null
   }
 
-  if (!trackInfo || !isVisible) {
+  if (!trackInfo) {
     return null
   }
 
   return (
     <AnimatePresence>
-      <motion.div
-        key="spotify-card"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 15
-        }}
-        className="fixed bottom-4 left-4 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-start space-x-4 max-w-[300px]"
-      >
-        <div className="flex-shrink-0">
-          <Image
-            src={trackInfo.albumImageUrl}
-            alt={trackInfo.album}
-            width={60}
-            height={60}
-            className="rounded-md"
-          />
-        </div>
-        <div className="flex flex-col items-start">
-          <a
-            href={trackInfo.songUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium hover:underline text-left line-clamp-1"
-          >
-            {trackInfo.title}
-          </a>
-          <p className="text-xs text-muted-foreground text-left line-clamp-1">
-            {trackInfo.artist}
-          </p>
-          <div className="flex items-center mt-1">
-            <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
-            <span className="text-xs text-muted-foreground">
-              {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
-            </span>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsVisible(false)}
-          className="absolute top-1 right-1 p-1 hover:bg-background/50"
-          aria-label="Close Spotify player"
+      {isVisible && (
+        <motion.div
+          key="spotify-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }}
+          className="fixed bottom-4 left-4 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-start space-x-4 max-w-[300px]"
         >
-          <X className="h-4 w-4" />
-        </Button>
-      </motion.div>
+          <div className="flex-shrink-0">
+            <Image
+              src={trackInfo.albumImageUrl}
+              alt={trackInfo.album}
+              width={60}
+              height={60}
+              className="rounded-md"
+            />
+          </div>
+          <div className="flex flex-col items-start">
+            <a
+              href={trackInfo.songUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium hover:underline text-left line-clamp-1"
+            >
+              {trackInfo.title}
+            </a>
+            <p className="text-xs text-muted-foreground text-left line-clamp-1">
+              {trackInfo.artist}
+            </p>
+            <div className="flex items-center mt-1">
+              <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
+              <span className="text-xs text-muted-foreground">
+                {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
+              </span>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsVisible(false)}
+            className="absolute top-1 right-1 p-1 hover:bg-background/50"
+            aria-label="Close Spotify player"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </motion.div>
+      )}
     </AnimatePresence>
   )
 }
