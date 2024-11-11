@@ -42,7 +42,6 @@ import {
   SiPostgresql,
   SiOracle,
 } from "react-icons/si"
-import Weather from '@/components/weather'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -577,7 +576,6 @@ export default function MinimalistPortfolio() {
           </motion.div>
         </motion.div>
         <NowPlaying />
-        <Weather />
       </div>
     </div>
   )
