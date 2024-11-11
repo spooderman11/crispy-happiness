@@ -308,9 +308,11 @@ function NowPlaying() {
                   {trackInfo?.artist || "No artist"}
                 </p>
                 <div className="flex items-center mt-1">
-                  <Music className="w-4 h-4 mr-1 text-red-500" />
+                  <Music className={`w-4 h-4 mr-1 ${trackInfo?.isPlaying ? 'text-green-500' : 'text-red-500'}`} />
                   <span className="text-xs text-muted-foreground">
-                    Not listening to anything
+                    {isLoading ? 'Updating...' : 
+                     trackInfo?.isPlaying ? 'Now playing on Spotify' : 
+                     'Not listening to anything'}
                   </span>
                 </div>
               </div>
