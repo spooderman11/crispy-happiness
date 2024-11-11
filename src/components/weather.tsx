@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, Sun, CloudRain, Wind, X } from "lucide-react"
+import { Cloud, Sun, CloudRain, Wind, X, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type WeatherData = {
@@ -26,6 +26,9 @@ export default function Weather() {
         throw new Error(`HTTP error! status: ${res.status}`)
       }
       const data = await res.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
       setWeatherData(data)
     } catch (error) {
       console.error('Error fetching weather data:', error)
@@ -63,11 +66,6 @@ export default function Weather() {
     }
   }
 
-  if (error) {
-    console.error('Weather widget error:', error)
-    return null
-  }
-
   return (
     <AnimatePresence>
       {isVisible && (
@@ -94,16 +92,30 @@ export default function Weather() {
               <X className="h-3 w-3" />
             </Button>
             <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 w-[200px]">
-              <h3 className="text-lg font-semibold mb-2 flex items-center justify-between">
-                Weather
-                {weatherData && getWeatherIcon(weatherData.icon)}
-              </h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-semibold">Weather</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={fetchWeather}
+                  disabled={isLoading}
+                  className="w-8 h-8"
+                  aria-label="Refresh weather data"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
               {isLoading ? (
                 <p className="text-sm text-muted-foreground">Loading weather data...</p>
+              ) : error ? (
+                <p className="text-sm text-red-500">{error}</p>
               ) : weatherData ? (
-                <div>
-                  <p className="text-2xl font-bold">{weatherData.temperature}°C</p>
-                  <p className="text-sm text-muted-foreground capitalize">{weatherData.description}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-2xl font-bold">{weatherData.temperature}°C</p>
+                    <p className="text-sm text-muted-foreground capitalize">{weatherData.description}</p>
+                  </div>
+                  {getWeatherIcon(weatherData.icon)}
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">No weather data available</p>
