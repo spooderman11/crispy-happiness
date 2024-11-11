@@ -241,39 +241,29 @@ function NowPlaying() {
   }
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={isVisible ? 'visible' : 'hidden'}
-        initial={isVisible ? { opacity: 0, y: 20 } : { opacity: 0, y: 100 }}
-        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 100 }}
-        exit={{ opacity: 0, y: 100 }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 15
-        }}
-        className="fixed bottom-4 left-4 flex flex-col items-start"
+    <div className="fixed bottom-4 left-4 flex flex-col items-start">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsVisible(!isVisible)}
+        className="mb-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full p-2 z-10"
+        aria-label={isVisible ? "Hide Spotify card" : "Show Spotify card"}
       >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsVisible(!isVisible)}
-          className="mb-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full p-2"
-          aria-label={isVisible ? "Hide Spotify card" : "Show Spotify card"}
-        >
-          {isVisible ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-        </Button>
+        {isVisible ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+      </Button>
+      <AnimatePresence mode="wait">
         {isVisible && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            key="spotify-card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{
               type: "spring",
               stiffness: 100,
               damping: 15
             }}
-            className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-center space-x-4"
+            className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 flex items-start space-x-4 max-w-[300px]"
           >
             <div className="flex-shrink-0">
               <Image
@@ -284,16 +274,16 @@ function NowPlaying() {
                 className="rounded-md"
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col items-start">
               <a
                 href={trackInfo.songUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium hover:underline text-left"
+                className="text-sm font-medium hover:underline text-left line-clamp-1"
               >
                 {trackInfo.title}
               </a>
-              <p className="text-xs text-muted-foreground text-left">
+              <p className="text-xs text-muted-foreground text-left line-clamp-1">
                 {trackInfo.artist}
               </p>
               <div className="flex items-center mt-1">
@@ -305,8 +295,8 @@ function NowPlaying() {
             </div>
           </motion.div>
         )}
-      </motion.div>
-    </AnimatePresence>
+      </AnimatePresence>
+    </div>
   )
 }
 
