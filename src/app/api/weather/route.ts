@@ -1,12 +1,28 @@
 import { NextResponse } from 'next/server'
+import { headers } from 'next/headers'
 
 const API_KEY = process.env.OPENWEATHERMAP_API_KEY
 const CITY = 'Helsinki' // You can change this to any city you want
+const COOLDOWN_SECONDS = 30
 
-export async function GET() {
+// In-memory store for cooldowns. In a production app, use a database or Redis.
+const cooldowns = new Map<string, number>()
+
+export async function GET(request: Request) {
   if (!API_KEY) {
     console.error('OPENWEATHERMAP_API_KEY is not set')
     return NextResponse.json({ error: 'API key is not configured' }, { status: 500 })
+  }
+
+  const headersList = headers()
+  const ip = headersList.get('x-forwarded-for') || 'unknown'
+  const now = Date.now()
+
+  // Check if the user is on cooldown
+  const lastRequestTime = cooldowns.get(ip)
+  if (lastRequestTime && now - lastRequestTime < COOLDOWN_SECONDS * 1000) {
+    const remainingCooldown = Math.ceil((COOLDOWN_SECONDS * 1000 - (now - lastRequestTime)) / 1000)
+    return NextResponse.json({ error: 'Rate limit exceeded', cooldown: remainingCooldown }, { status: 429 })
   }
 
   try {
@@ -23,6 +39,9 @@ export async function GET() {
       description: data.weather[0].description,
       icon: data.weather[0].icon
     }
+
+    // Update the cooldown for this user
+    cooldowns.set(ip, now)
 
     return NextResponse.json(weatherData)
   } catch (error) {

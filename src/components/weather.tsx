@@ -16,8 +16,7 @@ export default function Weather() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(true)
-  const [isRefreshCooldown, setIsRefreshCooldown] = useState(false)
-  const [cooldownTime, setCooldownTime] = useState(30)
+  const [cooldownTime, setCooldownTime] = useState(0)
 
   const fetchWeather = async () => {
     setIsLoading(true)
@@ -25,13 +24,16 @@ export default function Weather() {
     try {
       const res = await fetch('/api/weather')
       if (!res.ok) {
+        const data = await res.json()
+        if (res.status === 429 && data.cooldown) {
+          setCooldownTime(data.cooldown)
+          throw new Error(`Rate limit exceeded. Try again in ${data.cooldown} seconds.`)
+        }
         throw new Error(`HTTP error! status: ${res.status}`)
       }
       const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
       setWeatherData(data)
+      setCooldownTime(30) // Reset cooldown timer on successful fetch
     } catch (error) {
       console.error('Error fetching weather data:', error)
       setError(error instanceof Error ? error.message : 'Failed to fetch weather data')
@@ -48,20 +50,18 @@ export default function Weather() {
 
   useEffect(() => {
     let timer: NodeJS.Timeout
-    if (isRefreshCooldown && cooldownTime > 0) {
+    if (cooldownTime > 0) {
       timer = setInterval(() => {
         setCooldownTime((prevTime) => prevTime - 1)
       }, 1000)
-    } else if (cooldownTime === 0) {
-      setIsRefreshCooldown(false)
-      setCooldownTime(30)
     }
     return () => clearInterval(timer)
-  }, [isRefreshCooldown, cooldownTime])
+  }, [cooldownTime])
 
   const handleRefresh = () => {
-    fetchWeather()
-    setIsRefreshCooldown(true)
+    if (cooldownTime === 0) {
+      fetchWeather()
+    }
   }
 
   const getWeatherIcon = (icon: string) => {
@@ -118,11 +118,11 @@ export default function Weather() {
                   variant="ghost"
                   size="icon"
                   onClick={handleRefresh}
-                  disabled={isLoading || isRefreshCooldown}
+                  disabled={isLoading || cooldownTime > 0}
                   className="w-8 h-8 hover:bg-white/10 relative"
                   aria-label="Refresh weather data"
                 >
-                  {isRefreshCooldown ? (
+                  {cooldownTime > 0 ? (
                     <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/80">
                       {cooldownTime}
                     </span>
