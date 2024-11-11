@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const API_KEY = process.env.OPENWEATHERMAP_API_KEY
-const CITY = 'London' // You can change this to any city you want
+const CITY = 'Helsinki' // You can change this to any city you want
 
 export async function GET() {
   if (!API_KEY) {
