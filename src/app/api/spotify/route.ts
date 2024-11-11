@@ -17,6 +17,7 @@ async function getAccessToken() {
       grant_type: 'refresh_token',
       refresh_token: process.env.SPOTIFY_REFRESH_TOKEN || '',
     }),
+    cache: 'no-store',
   })
 
   if (!response.ok) {
@@ -31,7 +32,7 @@ async function getNowPlaying(accessToken: string) {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
-    cache: 'no-store', // Disable cache only for currently playing
+    cache: 'no-store',
   })
 }
 
@@ -40,6 +41,7 @@ async function getRecentlyPlayed(accessToken: string) {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+    cache: 'no-store',
   })
 }
 
@@ -55,13 +57,13 @@ export async function GET() {
       const song = await nowPlayingResponse.json()
       
       return NextResponse.json({
-        isPlaying: true,
+        isPlaying: song.is_playing,
         title: song.item.name,
         artist: song.item.artists.map((_artist: any) => _artist.name).join(', '),
         album: song.item.album.name,
         albumImageUrl: song.item.album.images[0].url,
         songUrl: song.item.external_urls.spotify,
-      })
+      }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
     }
 
     // If no track is playing, get recently played
@@ -74,7 +76,7 @@ export async function GET() {
     const recentlyPlayed = await recentlyPlayedResponse.json()
 
     if (!recentlyPlayed.items?.length) {
-      return NextResponse.json({ isPlaying: false })
+      return NextResponse.json({ isPlaying: false }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
     }
 
     const mostRecent = recentlyPlayed.items[0]
@@ -88,13 +90,13 @@ export async function GET() {
       albumImageUrl: track.album.images[0].url,
       songUrl: track.external_urls.spotify,
       lastPlayed: mostRecent.played_at
-    })
+    }, { headers: { 'Cache-Control': 'no-store, max-age=0' } })
 
   } catch (error) {
     console.error('Error in Spotify API route:', error)
     return NextResponse.json(
       { isPlaying: false, error: 'Failed to fetch Spotify data' },
-      { status: 500 }
+      { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0' } }
     )
   }
 }

@@ -192,7 +192,7 @@ function NowPlaying() {
     try {
       const res = await fetch('/api/spotify', {
         cache: 'no-store',
-        next: { revalidate: 0 }
+        headers: { 'Cache-Control': 'no-cache' }
       })
 
       if (!res.ok) {
@@ -223,13 +223,34 @@ function NowPlaying() {
     }
 
     fetchData()
-    const interval = setInterval(fetchData, 5000)
+    const interval = setInterval(fetchData, 30000) // Poll every 30 seconds
 
     return () => {
       mounted = false
       clearInterval(interval)
     }
   }, [])
+
+  const formatLastPlayed = (lastPlayed: string) => {
+    if (!lastPlayed) return ''
+    const date = new Date(lastPlayed)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    
+    const minutes = Math.floor(diff / 1000 / 60)
+    
+    if (minutes < 1) return 'Just now'
+    if (minutes === 1) return '1 minute ago'
+    if (minutes < 60) return `${minutes} minutes ago`
+    
+    const hours = Math.floor(minutes / 60)
+    if (hours === 1) return '1 hour ago'
+    if (hours < 24) return `${hours} hours ago`
+    
+    const days = Math.floor(hours / 24)
+    if (days === 1) return 'Yesterday'
+    return `${days} days ago`
+  }
 
   if (error) {
     console.error('NowPlaying error:', error)
@@ -277,9 +298,14 @@ function NowPlaying() {
               {trackInfo.artist}
             </p>
             <div className="flex items-center mt-1">
-              <Music className={`w-4 h-4 mr-1 ${trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
+              <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
               <span className="text-xs text-muted-foreground">
-                {trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
+                {isLoading ? 'Updating...' : trackInfo.isPlaying 
+                  ? 'Playing on Spotify' 
+                  : trackInfo.lastPlayed 
+                    ? `Last played ${formatLastPlayed(trackInfo.lastPlayed)}`
+                    : 'Last played on Spotify'
+                }
               </span>
             </div>
           </div>
@@ -297,6 +323,7 @@ function NowPlaying() {
     </AnimatePresence>
   )
 }
+
 
 export default function MinimalistPortfolio() {
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'de' | 'it' | 'ja' | 'ko' | 'pt' | 'ru' | 'zh'>('en')
