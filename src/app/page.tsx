@@ -19,18 +19,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { X,Github, Twitter, Mail, ExternalLink, Code, History, Globe, Music, 
+import {
+  X, Github, Twitter, Mail, ExternalLink, Code, History, Globe, Music,
   Maximize2, Minimize2
-}from "lucide-react"
+} from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
-import { 
-  SiReact, 
-  SiNextdotjs, 
-  SiFastify, 
-  SiMongodb, 
-  SiTailwindcss, 
-  SiTypescript, 
-  SiNodedotjs, 
+import {
+  SiReact,
+  SiNextdotjs,
+  SiFastify,
+  SiMongodb,
+  SiTailwindcss,
+  SiTypescript,
+  SiNodedotjs,
   SiGraphql,
   SiJavascript,
   SiPython,
@@ -239,17 +240,17 @@ function NowPlaying() {
     const date = new Date(lastPlayed)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
-    
+
     const minutes = Math.floor(diff / 1000 / 60)
-    
+
     if (minutes < 1) return 'Just now'
     if (minutes === 1) return '1 minute ago'
     if (minutes < 60) return `${minutes} minutes ago`
-    
+
     const hours = Math.floor(minutes / 60)
     if (hours === 1) return '1 hour ago'
     if (hours < 24) return `${hours} hours ago`
-    
+
     const days = Math.floor(hours / 24)
     if (days === 1) return 'Yesterday'
     return `${days} days ago`
@@ -284,26 +285,26 @@ function NowPlaying() {
               variant="ghost"
               size="icon"
               onClick={() => setIsVisible(false)}
-              className="absolute -top-3 -right-3 p-1.5 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full hover:bg-background/50 z-10 shadow-md"
+              className="absolute -top-2 -right-2 w-6 h-6 p-1 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full hover:bg-background/50 z-10 shadow-sm"
               aria-label="Close Spotify player"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsMinimized(!isMinimized)}
-              className="absolute -top-3 -left-3 p-1.5 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full hover:bg-background/50 z-10 shadow-md"
+              className="absolute -top-2 -left-2 w-6 h-6 p-1 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full hover:bg-background/50 z-10 shadow-sm"
               aria-label={isMinimized ? "Maximize Spotify player" : "Minimize Spotify player"}
             >
-              {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
             </Button>
             <motion.div
               layout
               initial={false}
               animate={{
-                width: isMinimized ? 68 : 300,
-                height: isMinimized ? 68 : 'auto',
+                width: isMinimized ? 64 : 300,
+                height: isMinimized ? 64 : 'auto',
               }}
               transition={{
                 type: "spring",
@@ -316,8 +317,8 @@ function NowPlaying() {
                 <Image
                   src={trackInfo.albumImageUrl}
                   alt={trackInfo.album}
-                  width={60}
-                  height={60}
+                  width={56}
+                  height={56}
                   className="rounded-md"
                 />
               </motion.div>
@@ -328,7 +329,7 @@ function NowPlaying() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.2 }}
-                    className="flex flex-col items-start overflow-hidden flex-grow"
+                    className="flex flex-col items-start overflow-hidden flex-grow pt-1"
                   >
                     <a
                       href={trackInfo.songUrl}
@@ -344,9 +345,9 @@ function NowPlaying() {
                     <div className="flex items-center mt-1">
                       <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
                       <span className="text-xs text-muted-foreground">
-                        {isLoading ? 'Updating...' : trackInfo.isPlaying 
-                          ? 'Playing on Spotify' 
-                          : trackInfo.lastPlayed 
+                        {isLoading ? 'Updating...' : trackInfo.isPlaying
+                          ? 'Playing on Spotify'
+                          : trackInfo.lastPlayed
                             ? `Last played ${formatLastPlayed(trackInfo.lastPlayed)}`
                             : 'Last played on Spotify'
                         }
@@ -541,7 +542,7 @@ export default function MinimalistPortfolio() {
             </Avatar>
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             className="text-4xl sm:text-5xl font-bold text-foreground"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -550,7 +551,7 @@ export default function MinimalistPortfolio() {
             <Typewriter texts={greetings} />
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             className="text-lg text-muted-foreground max-w-[600px] mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -559,7 +560,7 @@ export default function MinimalistPortfolio() {
             {t('description')}
           </motion.p>
 
-          <motion.div 
+          <motion.div
             className="space-y-4 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -573,7 +574,7 @@ export default function MinimalistPortfolio() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="flex flex-wrap items-center justify-center gap-4 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -608,31 +609,31 @@ export default function MinimalistPortfolio() {
             </motion.div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="flex justify-center gap-4 pt-8 w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.5 }}
           >
-            <SocialButton 
-              icon={Github} 
-              href="https://github.com/spooderman11" 
-              label="GitHub Profile" 
+            <SocialButton
+              icon={Github}
+              href="https://github.com/spooderman11"
+              label="GitHub Profile"
             />
-            <SocialButton 
-              icon={Twitter} 
-              href="https://x.com/therealspoody" 
-              label="Twitter Profile" 
+            <SocialButton
+              icon={Twitter}
+              href="https://x.com/therealspoody"
+              label="Twitter Profile"
             />
-            <SocialButton 
-              icon={Mail} 
-              href="mailto:michael@vynx.tech" 
-              label="Email" 
+            <SocialButton
+              icon={Mail}
+              href="mailto:michael@vynx.tech"
+              label="Email"
             />
-            <SocialButton 
-              icon={FaDiscord} 
-              href="https://discord.com/users/1260750149446013090" 
-              label="Discord Profile" 
+            <SocialButton
+              icon={FaDiscord}
+              href="https://discord.com/users/1260750149446013090"
+              label="Discord Profile"
             />
           </motion.div>
         </motion.div>
