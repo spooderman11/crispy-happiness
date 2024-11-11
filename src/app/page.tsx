@@ -279,7 +279,7 @@ function NowPlaying() {
             <div className="flex items-center mt-1">
               <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
               <span className="text-xs text-muted-foreground">
-                {isLoading ? 'Updating...' : trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
+                {trackInfo.isPlaying ? 'Playing on Spotify' : 'Last played on Spotify'}
               </span>
             </div>
           </div>
