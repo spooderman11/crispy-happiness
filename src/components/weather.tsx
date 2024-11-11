@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, Sun, CloudRain, Wind, X, RotateCw, Loader2Icon } from "lucide-react"
+import { Cloud, Sun, CloudRain, Wind, X, RotateCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type WeatherData = {
@@ -16,6 +16,8 @@ export default function Weather() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(true)
+  const [isRefreshCooldown, setIsRefreshCooldown] = useState(false)
+  const [cooldownTime, setCooldownTime] = useState(30)
 
   const fetchWeather = async () => {
     setIsLoading(true)
@@ -43,6 +45,24 @@ export default function Weather() {
     const interval = setInterval(fetchWeather, 600000) // Update every 10 minutes
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (isRefreshCooldown && cooldownTime > 0) {
+      timer = setInterval(() => {
+        setCooldownTime((prevTime) => prevTime - 1)
+      }, 1000)
+    } else if (cooldownTime === 0) {
+      setIsRefreshCooldown(false)
+      setCooldownTime(30)
+    }
+    return () => clearInterval(timer)
+  }, [isRefreshCooldown, cooldownTime])
+
+  const handleRefresh = () => {
+    fetchWeather()
+    setIsRefreshCooldown(true)
+  }
 
   const getWeatherIcon = (icon: string) => {
     switch (icon) {
@@ -97,16 +117,22 @@ export default function Weather() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={fetchWeather}
-                  disabled={isLoading}
-                  className="w-6 h-6 hover:bg-white/10"
+                  onClick={handleRefresh}
+                  disabled={isLoading || isRefreshCooldown}
+                  className="w-8 h-8 hover:bg-white/10 relative"
                   aria-label="Refresh weather data"
                 >
-                  <RotateCw className={`w-3 h-3 text-white/80 ${isLoading ? 'animate-spin' : ''}`} />
+                  {isRefreshCooldown ? (
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white/80">
+                      {cooldownTime}
+                    </span>
+                  ) : (
+                    <RotateCw className={`w-4 h-4 text-white/80 ${isLoading ? 'animate-spin' : ''}`} />
+                  )}
                 </Button>
               </div>
               {isLoading ? (
-                <Loader2Icon className="w-6 h-6 text-white animate-spin" />
+                <p className="text-sm text-white/60">Loading...</p>
               ) : error ? (
                 <p className="text-sm text-red-400">{error}</p>
               ) : weatherData ? (
