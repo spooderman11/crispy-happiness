@@ -226,34 +226,13 @@ function NowPlaying() {
     }
 
     fetchData()
-    const interval = setInterval(fetchData, 30000) // Poll every 30 seconds
+    const interval = setInterval(fetchData, 15000) // Poll every 15 seconds
 
     return () => {
       mounted = false
       clearInterval(interval)
     }
   }, [])
-
-  const formatLastPlayed = (lastPlayed: string) => {
-    if (!lastPlayed) return ''
-    const date = new Date(lastPlayed)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-    
-    const minutes = Math.floor(diff / 1000 / 60)
-    
-    if (minutes < 1) return 'Just now'
-    if (minutes === 1) return '1 minute ago'
-    if (minutes < 60) return `${minutes} minutes ago`
-    
-    const hours = Math.floor(minutes / 60)
-    if (hours === 1) return '1 hour ago'
-    if (hours < 24) return `${hours} hours ago`
-    
-    const days = Math.floor(hours / 24)
-    if (days === 1) return 'Yesterday'
-    return `${days} days ago`
-  }
 
   if (error) {
     console.error('NowPlaying error:', error)
@@ -286,12 +265,12 @@ function NowPlaying() {
               <X className="h-3 w-3" />
             </Button>
             <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-2 flex items-start space-x-4 overflow-hidden w-[300px]">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 w-14 h-14 relative">
                 <Image
-                  src={trackInfo?.albumImageUrl || "https://cdn.vynx.tech/static/placeholder.svg"}
+                  src={trackInfo?.albumImageUrl || "/placeholder.svg?height=56&width=56"}
                   alt={trackInfo?.album || "Album placeholder"}
-                  width={56}
-                  height={56}
+                  layout="fill"
+                  objectFit="cover"
                   className="rounded-md"
                 />
               </div>
