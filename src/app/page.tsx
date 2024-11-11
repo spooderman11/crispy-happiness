@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import {
   X, Github, Twitter, Mail, ExternalLink, Code, History, Globe, Music,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, Cloud, Sun, CloudRain, Wind,
 } from "lucide-react"
 import { FaDiscord } from "react-icons/fa"
 import {
@@ -42,6 +42,7 @@ import {
   SiPostgresql,
   SiOracle,
 } from "react-icons/si"
+import Weather from '@/components/weather'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -289,9 +290,9 @@ function NowPlaying() {
                 <div className="flex items-center mt-1">
                   <Music className={`w-4 h-4 mr-1 ${trackInfo?.isPlaying ? 'text-green-500' : 'text-red-500'}`} />
                   <span className="text-xs text-muted-foreground">
-                    {isLoading ? 'Updating...' : 
-                     trackInfo?.isPlaying ? 'Now playing on Spotify' : 
-                     'Not listening to anything'}
+                    {isLoading ? 'Updating...' :
+                      trackInfo?.isPlaying ? 'Now playing on Spotify' :
+                        'Not listening to anything'}
                   </span>
                 </div>
               </div>
@@ -302,8 +303,6 @@ function NowPlaying() {
     </AnimatePresence>
   )
 }
-
-
 
 export default function MinimalistPortfolio() {
   const [language, setLanguage] = useState<'en' | 'es' | 'fr' | 'de' | 'it' | 'ja' | 'ko' | 'pt' | 'ru' | 'zh'>('en')
@@ -578,6 +577,7 @@ export default function MinimalistPortfolio() {
           </motion.div>
         </motion.div>
         <NowPlaying />
+        <Weather />
       </div>
     </div>
   )
