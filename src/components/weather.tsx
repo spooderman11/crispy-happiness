@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Cloud, Sun, CloudRain, Wind, X, RefreshCw } from "lucide-react"
+import { Cloud, Sun, CloudRain, Wind, X, RotateCw, Loader2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type WeatherData = {
@@ -48,21 +48,21 @@ export default function Weather() {
     switch (icon) {
       case '01d':
       case '01n':
-        return <Sun className="w-8 h-8 text-yellow-400" />
+        return <Sun className="w-6 h-6 text-yellow-400" />
       case '02d':
       case '02n':
       case '03d':
       case '03n':
       case '04d':
       case '04n':
-        return <Cloud className="w-8 h-8 text-gray-400" />
+        return <Cloud className="w-6 h-6 text-muted-foreground" />
       case '09d':
       case '09n':
       case '10d':
       case '10n':
-        return <CloudRain className="w-8 h-8 text-blue-400" />
+        return <CloudRain className="w-6 h-6 text-blue-400" />
       default:
-        return <Wind className="w-8 h-8 text-gray-600" />
+        return <Wind className="w-6 h-6 text-muted-foreground" />
     }
   }
 
@@ -91,34 +91,38 @@ export default function Weather() {
             >
               <X className="h-3 w-3" />
             </Button>
-            <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-4 w-[200px]">
+            <div className="bg-black/90 backdrop-blur-sm border border-white/10 rounded-xl p-4 w-[180px]">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold">Weather</h3>
+                <h3 className="text-sm font-medium text-white/80">Weather</h3>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={fetchWeather}
                   disabled={isLoading}
-                  className="w-8 h-8"
+                  className="w-6 h-6 hover:bg-white/10"
                   aria-label="Refresh weather data"
                 >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RotateCw className={`w-3 h-3 text-white/80 ${isLoading ? 'animate-spin' : ''}`} />
                 </Button>
               </div>
               {isLoading ? (
-                <p className="text-sm text-muted-foreground">Loading weather data...</p>
+                <Loader2Icon className="w-6 h-6 text-white animate-spin" />
               ) : error ? (
-                <p className="text-sm text-red-500">{error}</p>
+                <p className="text-sm text-red-400">{error}</p>
               ) : weatherData ? (
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-bold">{weatherData.temperature}°C</p>
-                    <p className="text-sm text-muted-foreground capitalize">{weatherData.description}</p>
+                <div className="space-y-1">
+                  <div className="flex items-start justify-between">
+                    <span className="text-3xl font-semibold text-white">
+                      {weatherData.temperature}°C
+                    </span>
+                    {getWeatherIcon(weatherData.icon)}
                   </div>
-                  {getWeatherIcon(weatherData.icon)}
+                  <p className="text-sm text-white/60 capitalize">
+                    {weatherData.description}
+                  </p>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No weather data available</p>
+                <p className="text-sm text-white/60">No data available</p>
               )}
             </div>
           </div>
