@@ -187,7 +187,6 @@ function NowPlaying() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(true)
-  const [isMinimized, setIsMinimized] = useState(false)
   const prevDataRef = useRef<any>(null)
 
   const fetchTrackInfo = async () => {
@@ -240,17 +239,17 @@ function NowPlaying() {
     const date = new Date(lastPlayed)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
-
+    
     const minutes = Math.floor(diff / 1000 / 60)
-
+    
     if (minutes < 1) return 'Just now'
     if (minutes === 1) return '1 minute ago'
     if (minutes < 60) return `${minutes} minutes ago`
-
+    
     const hours = Math.floor(minutes / 60)
     if (hours === 1) return '1 hour ago'
     if (hours < 24) return `${hours} hours ago`
-
+    
     const days = Math.floor(hours / 24)
     if (days === 1) return 'Yesterday'
     return `${days} days ago`
@@ -258,10 +257,6 @@ function NowPlaying() {
 
   if (error) {
     console.error('NowPlaying error:', error)
-    return null
-  }
-
-  if (!trackInfo) {
     return null
   }
 
@@ -290,79 +285,43 @@ function NowPlaying() {
             >
               <X className="h-3 w-3" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMinimized(!isMinimized)}
-              className="absolute -top-2 -left-2 w-6 h-6 p-1 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full hover:bg-background/50 z-10 shadow-sm"
-              aria-label={isMinimized ? "Maximize Spotify player" : "Minimize Spotify player"}
-            >
-              {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
-            </Button>
-            <motion.div
-              layout
-              initial={false}
-              animate={{
-                width: isMinimized ? 64 : 300,
-                height: isMinimized ? 64 : 'auto',
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30
-              }}
-              className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-2 flex items-start space-x-4 overflow-hidden"
-            >
-              <motion.div layout className="flex-shrink-0">
+            <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-lg p-2 flex items-start space-x-4 overflow-hidden w-[300px]">
+              <div className="flex-shrink-0">
                 <Image
-                  src={trackInfo.albumImageUrl}
-                  alt={trackInfo.album}
+                  src={trackInfo?.albumImageUrl || "https://v0.dev/placeholder.svg?height=56&width=56"}
+                  alt={trackInfo?.album || "Album placeholder"}
                   width={56}
                   height={56}
                   className="rounded-md"
                 />
-              </motion.div>
-              <AnimatePresence>
-                {!isMinimized && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex flex-col items-start overflow-hidden flex-grow pt-1"
-                  >
-                    <a
-                      href={trackInfo.songUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium hover:underline text-left line-clamp-1"
-                    >
-                      {trackInfo.title}
-                    </a>
-                    <p className="text-xs text-muted-foreground text-left line-clamp-1">
-                      {trackInfo.artist}
-                    </p>
-                    <div className="flex items-center mt-1">
-                      <Music className={`w-4 h-4 mr-1 ${isLoading ? 'animate-pulse' : trackInfo.isPlaying ? 'text-green-500' : 'text-yellow-500'}`} />
-                      <span className="text-xs text-muted-foreground">
-                        {isLoading ? 'Updating...' : trackInfo.isPlaying
-                          ? 'Playing on Spotify'
-                          : trackInfo.lastPlayed
-                            ? `Last played ${formatLastPlayed(trackInfo.lastPlayed)}`
-                            : 'Last played on Spotify'
-                        }
-                      </span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              </div>
+              <div className="flex flex-col items-start overflow-hidden flex-grow pt-1">
+                <a
+                  href={trackInfo?.songUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium hover:underline text-left line-clamp-1"
+                >
+                  {trackInfo?.title || "Not listening to anything"}
+                </a>
+                <p className="text-xs text-muted-foreground text-left line-clamp-1">
+                  {trackInfo?.artist || "No artist"}
+                </p>
+                <div className="flex items-center mt-1">
+                  <Music className="w-4 h-4 mr-1 text-red-500" />
+                  <span className="text-xs text-muted-foreground">
+                    Not listening to anything
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
       )}
     </AnimatePresence>
   )
 }
+
 
 
 export default function MinimalistPortfolio() {
