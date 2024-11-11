@@ -16,7 +16,7 @@ async function fetchDiscordData(userId: string) {
           Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
           "Content-Type": "application/json",
         },
-        next: { revalidate: 60 }, // Cache for 60 seconds
+        next: { revalidate: 30 }, // Cache for 30 seconds
       }
     );
 
@@ -28,20 +28,20 @@ async function fetchDiscordData(userId: string) {
 
     const userData = await userResponse.json();
 
-    // Then fetch the member data from your guild
+    // Then fetch the member data from your guild with presence data
     const guildId = process.env.DISCORD_GUILD_ID;
     if (!guildId) {
       throw new Error("Discord guild ID is not configured");
     }
 
     const memberResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}`,
+      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}?with_presence=true`,
       {
         headers: {
           Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
           "Content-Type": "application/json",
         },
-        next: { revalidate: 60 }, // Cache for 60 seconds
+        next: { revalidate: 30 }, // Cache for 30 seconds
       }
     );
 
@@ -53,6 +53,23 @@ async function fetchDiscordData(userId: string) {
 
     const memberData = await memberResponse.json();
 
+    // Fetch presence data separately using the gateway endpoint
+    const presenceResponse = await fetch(
+      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/presences/${userId}`,
+      {
+        headers: {
+          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 30 }, // Cache for 30 seconds
+      }
+    );
+
+    let presenceData = { status: "offline", activities: [] };
+    if (presenceResponse.ok) {
+      presenceData = await presenceResponse.json();
+    }
+
     // Combine and format the data
     return {
       id: userData.id,
@@ -60,11 +77,10 @@ async function fetchDiscordData(userId: string) {
       globalName: userData.global_name,
       avatar: userData.avatar,
       discriminator: userData.discriminator,
-      status: memberData.status || "offline",
-      activities: memberData.activities || [],
       presence: {
-        status: memberData.status || "offline",
-        activities: memberData.activities || [],
+        status: presenceData.status || memberData.presence?.status || "offline",
+        activities:
+          presenceData.activities || memberData.presence?.activities || [],
       },
     };
   } catch (error) {
@@ -91,7 +107,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(discordData, {
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=15",
       },
     });
   } catch (error) {
