@@ -8,14 +8,16 @@ async function fetchDiscordData(userId: string) {
   }
 
   try {
-    // First fetch the user data
+    const headers = {
+      Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+      "Content-Type": "application/json",
+    };
+
+    // Fetch user data
     const userResponse = await fetch(
       `${DISCORD_API_ENDPOINT}/users/${userId}`,
       {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
+        headers,
       }
     );
 
@@ -27,20 +29,16 @@ async function fetchDiscordData(userId: string) {
 
     const userData = await userResponse.json();
 
-    // Then fetch the guild member data which includes presence
+    // Fetch guild member data with presence
     const guildId = process.env.DISCORD_GUILD_ID;
     if (!guildId) {
       throw new Error("Discord guild ID is not configured");
     }
 
-    // Use the new v10 endpoint that includes presence data
     const memberResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}?with_presence=true&with_member=true`,
+      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/members/${userId}?with_presence=true`,
       {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
+        headers,
         cache: "no-store",
       }
     );
@@ -53,24 +51,12 @@ async function fetchDiscordData(userId: string) {
 
     const memberData = await memberResponse.json();
 
-    // Fetch presence data specifically
-    const presenceResponse = await fetch(
-      `${DISCORD_API_ENDPOINT}/guilds/${guildId}/presences/${userId}`,
-      {
-        headers: {
-          Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }
-    );
+    // Attempt to get presence data, fallback to "offline" if unavailable
+    const presenceData = memberData.presence || {
+      status: "offline",
+      activities: [],
+    };
 
-    let presenceData = { status: "offline", activities: [] };
-    if (presenceResponse.ok) {
-      presenceData = await presenceResponse.json();
-    }
-
-    // Combine all the data, prioritizing presence data
     return {
       id: userData.id,
       username: userData.username,
@@ -78,9 +64,8 @@ async function fetchDiscordData(userId: string) {
       avatar: userData.avatar,
       discriminator: userData.discriminator,
       presence: {
-        status: presenceData.status || memberData.presence?.status || "offline",
-        activities:
-          presenceData.activities || memberData.presence?.activities || [],
+        status: presenceData.status || "offline",
+        activities: presenceData.activities || [],
       },
       member: {
         nickname: memberData.nick,
