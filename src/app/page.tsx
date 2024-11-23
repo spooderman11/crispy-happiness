@@ -560,7 +560,7 @@ export default function MinimalistPortfolio() {
               >
                 <Avatar className="w-32 h-32 mx-auto mb-4">
                   <AvatarImage
-                    src="https://cdn.discordapp.com/avatars/1260750149446013090/70d2ff6237503b4f171731a2db99f2fa.webp?size=128"
+                    src="https://cdn.discordapp.com/avatars/1260750149446013090/38f1d3a4bd578deef163cc2b6933a6a0.webp"
                     alt="Spoody"
                   />
                   <AvatarFallback>SP</AvatarFallback>
