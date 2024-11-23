@@ -25,7 +25,9 @@ export function WebGLErrorDialog({ open }: WebGLErrorDialogProps) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogAction>Understood</AlertDialogAction>
+          <AlertDialogAction onClick={() => window.location.reload()}>
+            Reload
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

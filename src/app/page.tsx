@@ -54,6 +54,8 @@ import {
   SiSass,
   SiPostgresql,
   SiOracle,
+  SiX,
+  SiGithub,
 } from "react-icons/si";
 import { WebGLErrorDialog } from "@/components/webgldialog";
 import Link from "next/link";
@@ -478,191 +480,194 @@ export default function MinimalistPortfolio() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <WebGLErrorDialog open={!webGLSupported} />
-      <div className="absolute inset-0">
-        {webGLSupported ? (
-          <Canvas camera={{ position: [0, 0, 1] }}>
-            <AnimatedStars />
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={false}
-            />
-          </Canvas>
-        ) : null}
-      </div>
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 text-center max-w-4xl mx-auto">
-        <div className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-6xl mx-auto">
-          <Select
-            value={language}
-            onValueChange={(value: typeof language) => setLanguage(value)}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select a language" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="de">Deutsch</SelectItem>
-              <SelectItem value="it">Italiano</SelectItem>
-              <SelectItem value="ja">日本語</SelectItem>
-              <SelectItem value="ko">한국어</SelectItem>
-              <SelectItem value="pt">Português</SelectItem>
-              <SelectItem value="ru">Русский</SelectItem>
-              <SelectItem value="zh">中文</SelectItem>
-            </SelectContent>
-          </Select>
-          <div className="flex items-center space-x-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
-                      asChild
-                    >
-                      <Link href="/legacy">
-                        <History className="mr-2 h-4 w-4" />
-                        {t("legacyVersion")}
-                      </Link>
-                    </Button>
-                  </motion.div>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  className="bg-secondary text-secondary-foreground"
-                >
-                  <p>{t("legacyVersion")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center space-y-6"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            <Avatar className="w-32 h-32 mx-auto mb-4">
-              <AvatarImage
-                src="https://cdn.discordapp.com/avatars/1260750149446013090/70d2ff6237503b4f171731a2db99f2fa.webp?size=128"
-                alt="Spoody"
+      {!webGLSupported ? (
+        <WebGLErrorDialog open={!webGLSupported} />
+      ) : (
+        <>
+          <div className="absolute inset-0">
+            <Canvas camera={{ position: [0, 0, 1] }}>
+              <AnimatedStars />
+              <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={false}
               />
-              <AvatarFallback>SP</AvatarFallback>
-            </Avatar>
-          </motion.div>
-
-          <motion.h1
-            className="text-4xl sm:text-5xl font-bold text-foreground"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <Typewriter texts={greetings} />
-          </motion.h1>
-
-          <motion.p
-            className="text-lg text-muted-foreground max-w-[600px] mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            {t("description")}
-          </motion.p>
-
-          <motion.div
-            className="space-y-4 w-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-semibold text-foreground">
-              {t("skills")}
-            </h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {skillIcons.map(({ name, icon }) => (
-                <SkillIcon key={name} icon={icon} name={name} />
-              ))}
+            </Canvas>
+          </div>
+          <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 text-center max-w-4xl mx-auto">
+            <div className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-6xl mx-auto">
+              <Select
+                value={language}
+                onValueChange={(value: typeof language) => setLanguage(value)}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select a language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="it">Italiano</SelectItem>
+                  <SelectItem value="ja">日本語</SelectItem>
+                  <SelectItem value="ko">한국어</SelectItem>
+                  <SelectItem value="pt">Português</SelectItem>
+                  <SelectItem value="ru">Русский</SelectItem>
+                  <SelectItem value="zh">中文</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center space-x-4">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
+                          asChild
+                        >
+                          <Link href="/legacy">
+                            <History className="mr-2 h-4 w-4" />
+                            {t("legacyVersion")}
+                          </Link>
+                        </Button>
+                      </motion.div>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      className="bg-secondary text-secondary-foreground"
+                    >
+                      <p>{t("legacyVersion")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            className="flex flex-wrap items-center justify-center gap-4 w-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="outline"
-                className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
-                asChild
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center space-y-6"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
               >
-                <Link href="/projects">
-                  {t("viewProjects")} <ExternalLink className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="outline"
-                className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
-                asChild
+                <Avatar className="w-32 h-32 mx-auto mb-4">
+                  <AvatarImage
+                    src="https://cdn.discordapp.com/avatars/1260750149446013090/70d2ff6237503b4f171731a2db99f2fa.webp?size=128"
+                    alt="Spoody"
+                  />
+                  <AvatarFallback>SP</AvatarFallback>
+                </Avatar>
+              </motion.div>
+  
+              <motion.h1
+                className="text-4xl sm:text-5xl font-bold text-foreground"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <a
-                  href="https://github.com/spooderman11/crispy-happiness"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Code className="mr-2 h-4 w-4" />
-                  {t("sourceCode")}
-                </a>
-              </Button>
+                <Typewriter texts={greetings} />
+              </motion.h1>
+  
+              <motion.p
+                className="text-lg text-muted-foreground max-w-[600px] mx-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                {t("description")}
+              </motion.p>
+  
+              <motion.div
+                className="space-y-4 w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <h2 className="text-2xl font-semibold text-foreground">
+                  {t("skills")}
+                </h2>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {skillIcons.map(({ name, icon }) => (
+                    <SkillIcon key={name} icon={icon} name={name} />
+                  ))}
+                </div>
+              </motion.div>
+  
+              <motion.div
+                className="flex flex-wrap items-center justify-center gap-4 w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+              >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="outline"
+                    className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
+                    asChild
+                  >
+                    <Link href="/projects">
+                      {t("viewProjects")} <ExternalLink className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="outline"
+                    className="bg-primary/20 hover:bg-primary/30 text-primary border-primary/20"
+                    asChild
+                  >
+                    <a
+                      href="https://github.com/spooderman11/crispy-happiness"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Code className="mr-2 h-4 w-4" />
+                      {t("sourceCode")}
+                    </a>
+                  </Button>
+                </motion.div>
+              </motion.div>
+  
+              <motion.div
+                className="flex justify-center gap-4 pt-8 w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.2, duration: 0.5 }}
+              >
+                <SocialButton
+                  icon={SiGithub}
+                  href="https://github.com/spooderman11"
+                  label="GitHub Profile"
+                />
+                <SocialButton
+                  icon={SiX}
+                  href="https://x.com/therealspoody"
+                  label="Twitter Profile"
+                />
+                <SocialButton
+                  icon={Mail}
+                  href="mailto:michael@vynx.tech"
+                  label="Email"
+                />
+                <SocialButton
+                  icon={FaDiscord}
+                  href="https://discord.com/users/1260750149446013090"
+                  label="Discord Profile"
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            className="flex justify-center gap-4 pt-8 w-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-          >
-            <SocialButton
-              icon={Github}
-              href="https://github.com/spooderman11"
-              label="GitHub Profile"
-            />
-            <SocialButton
-              icon={Twitter}
-              href="https://x.com/therealspoody"
-              label="Twitter Profile"
-            />
-            <SocialButton
-              icon={Mail}
-              href="mailto:michael@vynx.tech"
-              label="Email"
-            />
-            <SocialButton
-              icon={FaDiscord}
-              href="https://discord.com/users/1260750149446013090"
-              label="Discord Profile"
-            />
-          </motion.div>
-        </motion.div>
-        <NowPlaying />
-      </div>
+            <NowPlaying />
+          </div>
+        </>
+      )}
     </div>
   );
 }
