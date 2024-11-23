@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Info, ExternalLink } from "lucide-react"
+import { Info, ExternalLink } from 'lucide-react'
 import { SiReact, SiNodedotjs, SiFastify } from "react-icons/si"
 import Link from 'next/link'
 
@@ -53,9 +53,10 @@ const projects = [
       { name: "Fastify", icon: SiFastify }
     ],
     live: "https://renderize.app",
+    status: "discontinued",
     details: `
-      <h2>Renderize.app: AI-Powered Image to Text Conversion</h2>
-      <p>Renderize.app is an innovative web application that leverages artificial intelligence to convert images into text with high accuracy. This tool is perfect for extracting text from screenshots, documents, or any image containing text.</p>
+      <h2>Renderize.app: AI-Powered Image to Text Conversion (Discontinued)</h2>
+      <p>Renderize.app was an innovative web application that leveraged artificial intelligence to convert images into text with high accuracy. This tool was perfect for extracting text from screenshots, documents, or any image containing text.</p>
       <h3>Key Features:</h3>
       <ul>
         <li>Advanced AI text recognition</li>
@@ -64,9 +65,9 @@ const projects = [
         <li>User-friendly interface</li>
       </ul>
       <h3>Technical Implementation:</h3>
-      <p>Built with a modern tech stack including React for the frontend, Node.js and Fastify for the backend, the application provides a seamless and efficient user experience. The AI integration ensures accurate text extraction while maintaining fast processing times.</p>
-      <h3>Future Plans:</h3>
-      <p>We're continuously working on improving the AI model's accuracy and adding support for more languages and special use cases.</p>
+      <p>Built with a modern tech stack including React for the frontend, Node.js and Fastify for the backend, the application provided a seamless and efficient user experience. The AI integration ensured accurate text extraction while maintaining fast processing times.</p>
+      <h3>Discontinuation Notice:</h3>
+      <p>We regret to inform that Renderize.app has been discontinued. We appreciate the support from our users and the community during its operation.</p>
     `
   },
   {
@@ -131,7 +132,12 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0], index: n
     >
       <Card className="bg-background/60 backdrop-blur-sm hover:bg-background/80 transition-all duration-300 h-full flex flex-col border border-primary/20">
         <CardHeader className="flex-none">
-          <CardTitle className="text-2xl font-bold">{project.title}</CardTitle>
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-2xl font-bold">{project.title}</CardTitle>
+            {project.status === "discontinued" && (
+              <Badge variant="destructive">Discontinued</Badge>
+            )}
+          </div>
           <CardDescription className="text-sm mt-2">{project.description}</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow flex flex-col justify-end">
@@ -166,11 +172,24 @@ const ProjectCard = ({ project, index }: { project: typeof projects[0], index: n
               </ScrollArea>
             </DialogContent>
           </Dialog>
-          <Button variant="outline" size="sm" asChild className="flex-1 bg-primary/20 text-primary hover:bg-primary/30">
-            <Link href={project.live} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Live Demo
-            </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            asChild={!project.status || project.status !== "discontinued"}
+            className="flex-1 bg-primary/20 text-primary hover:bg-primary/30 disabled:opacity-50"
+            disabled={project.status === "discontinued"}
+          >
+            {project.status === "discontinued" ? (
+              <span>
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Discontinued
+              </span>
+            ) : (
+              <Link href={project.live} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Live Demo
+              </Link>
+            )}
           </Button>
         </CardFooter>
       </Card>
@@ -212,3 +231,4 @@ export default function ProjectsPage() {
     </div>
   )
 }
+
