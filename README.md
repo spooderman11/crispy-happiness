@@ -1,4 +1,4 @@
-# ✨ Starfield Portfolio
+# ✨ Spoody's Portfolio
 
 A modern, animated portfolio template featuring a stunning 3D starfield background, smooth animations, and a clean, professional design. Built with Next.js, Three.js, and Tailwind CSS.
 
