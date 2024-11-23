@@ -55,15 +55,7 @@ import {
   SiPostgresql,
   SiOracle,
 } from "react-icons/si";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { WebGLErrorDialog } from "@/components/webgldialog";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -90,6 +82,16 @@ function AnimatedStars() {
       speed={1}
     />
   );
+}
+
+function checkWebGLSupport() {
+  try {
+    const canvas = document.createElement('canvas')
+    return !!(window.WebGLRenderingContext && 
+      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+  } catch (e) {
+    return false
+  }
 }
 
 const SocialButton = ({
@@ -358,20 +360,13 @@ export default function MinimalistPortfolio() {
   const [language, setLanguage] = useState<
     "en" | "es" | "fr" | "de" | "it" | "ja" | "ko" | "pt" | "ru" | "zh"
   >("en");
+  const [webGLSupported, setWebGLSupported] = useState(true)
+
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
+    setWebGLSupported(checkWebGLSupport())
   }, []);
-
-  const [webGLError, setWebGLError] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
-  const handleWebGLError = () => {
-    setWebGLError(true);
-  };
 
   const translations = {
     en: {
@@ -483,22 +478,18 @@ export default function MinimalistPortfolio() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      <WebGLErrorDialog open={!webGLSupported} />
       <div className="absolute inset-0">
-        <Canvas
-          camera={{ position: [0, 0, 1] }}
-          onCreated={({ gl }) => {
-            if (!gl.capabilities.isWebGL2) {
-              handleWebGLError();
-            }
-          }}
-        >
-          <AnimatedStars />
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            enableRotate={false}
-          />
-        </Canvas>
+        {webGLSupported ? (
+          <Canvas camera={{ position: [0, 0, 1] }}>
+            <AnimatedStars />
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              enableRotate={false}
+            />
+          </Canvas>
+        ) : null}
       </div>
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 text-center max-w-4xl mx-auto">
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between max-w-6xl mx-auto">
@@ -672,20 +663,6 @@ export default function MinimalistPortfolio() {
         </motion.div>
         <NowPlaying />
       </div>
-
-      <AlertDialog open={webGLError}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>WebGL Not Supported</AlertDialogTitle>
-            <AlertDialogDescription>
-              Your browser or device doesn't support WebGL, which is required for the 3D background. The portfolio will still function, but without the animated background.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setWebGLError(false)}>Acknowledge</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
